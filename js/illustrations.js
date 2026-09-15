@@ -33,15 +33,29 @@
     return e;
   }
 
+  /** HTML 实体 → 字符。数据文件用 &lt; &gt; &amp; 表示 < > &，SVG 文本里需还原。 */
+  function decodeEntities(s) {
+    var t = String(s);
+    var named = { '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&apos;': "'", '&#39;': "'", '&nbsp;': ' ' };
+    t = t.replace(/&(lt|gt|amp|quot|apos|#39|nbsp);/g, function (m, k) {
+      return Object.prototype.hasOwnProperty.call(named, m) ? named[m] : m;
+    });
+    t = t.replace(/&#(\d+);/g, function (m, d) { var c = parseInt(d, 10); return isNaN(c) ? m : String.fromCharCode(c); });
+    t = t.replace(/&#x([0-9a-fA-F]+);/g, function (m, d) { var c = parseInt(d, 16); return isNaN(c) ? m : String.fromCharCode(c); });
+    return t;
+  }
+
   /** LaTeX 片段 → Unicode 纯文本（供 SVG 标签使用） */
   function toU(s) {
     var M = global.DSHMath;
-    if (!M) { return String(s); }
-    try {
-      if (M.labelToUnicode) { return M.labelToUnicode(s); }
-      if (M.mathToUnicode) { return M.mathToUnicode(s); }
-    } catch (e) { /* 保底 */ }
-    return String(s);
+    var r;
+    if (!M) { r = String(s); }
+    else {
+      try {
+        r = M.labelToUnicode ? M.labelToUnicode(s) : (M.mathToUnicode ? M.mathToUnicode(s) : String(s));
+      } catch (e) { r = String(s); }
+    }
+    return decodeEntities(r);
   }
 
   function num(v) {
@@ -394,11 +408,11 @@
     if (cap || def.title) {
       var fc = document.createElement('figcaption');
       // 图注可能含 \(...\) 公式，这里保留为纯文本，公式交给 DSHMath.render 处理；
-      // 但要去掉可能存在的 HTML 标签，避免在图注里出现裸标签。
-      var capText = cap == null ? '' : String(cap).replace(/<[^>]*>/g, '');
+      // 但要去掉可能存在的 HTML 标签，避免在图注里出现裸标签，再还原 &lt; 等实体。
+      var capText = cap == null ? '' : decodeEntities(String(cap).replace(/<[^>]*>/g, ''));
       if (def.title) {
         var b = document.createElement('b');
-        b.textContent = String(def.title).replace(/<[^>]*>/g, '');
+        b.textContent = decodeEntities(String(def.title).replace(/<[^>]*>/g, ''));
         fc.appendChild(b);
         if (capText) { fc.appendChild(document.createTextNode('——' + capText)); }
       } else {
