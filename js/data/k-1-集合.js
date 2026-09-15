@@ -20,9 +20,8 @@ DSHData.registerKnowledge({
         + '<li><b>区间法</b>：连续数集可用区间，如 \\((-2,2)\\)、\\([1,+\\infty)\\)；端点开闭对应“取到”与“取不到”。</li>'
         + '<li><b>韦恩图（Venn 图）</b>：用平面内封闭曲线的内部表示集合，适合直观判断关系与运算，不能代替证明。</li>'
         + '</ol>'
-        + '<p>看下面的对照图：描述法的“\\(x^{2}&lt;4\\)”、列举法的“\\(-1,0,1\\)”与区间法的“\\((-2,2)\\)”其实是同一个集合的三种写法，而韦恩图与数轴给出了它的两种图像。</p>'
-        + DSHFig.use('c1-set-represent')
-        + '<p class="small muted">读图提示：注意数轴上两个端点是空心点——它们满足 \\(x^{2}=4\\)，不属于 \\((-2,2)\\)；写解集时“空心”与“实心”决定了用圆括号还是方括号。</p>'
+
+
     },
     {
       title: '二、元素的三大特性：确定性、互异性、无序性',
@@ -56,8 +55,7 @@ DSHData.registerKnowledge({
         + '<p>也就是说，“空集是任何集合的子集”是对的，但“空集是任何集合的真子集”是错的，例如 \\(\\varnothing\\) 不是 \\(\\varnothing\\) 的真子集。</p>'
         + '<p><b>子集的传递性</b>：若 \\(A\\subseteq B\\) 且 \\(B\\subseteq C\\)，则 \\(A\\subseteq C\\)。证明时只需“顺着定义走”：任取 \\(x\\in A\\)，由 \\(A\\subseteq B\\) 得 \\(x\\in B\\)，再由 \\(B\\subseteq C\\) 得 \\(x\\in C\\)，于是 \\(A\\subseteq C\\)。</p>'
         + '<p>下面用韦恩图直观刻画“\\(A\\subseteq B\\)”与“\\(A\\subsetneq B\\)”的差别：后者要求 \\(B\\) 中确实“多出”一块区域。</p>'
-        + DSHFig.use('c1-sufficient')
-        + '<p class="small muted">读图提示：图中小圆完全落在大圆内部，这正是包含关系的图像特征；判断两个集合的关系，可以先在图上或数轴上把范围画出来。</p>'
+
     },
     {
       title: '四、集合的基本运算：交、并、补',
@@ -68,8 +66,7 @@ DSHData.registerKnowledge({
         + '<li><b>并集</b>：\\(A\\cup B=\\{x\\mid x\\in A\\ \\text{或}\\ x\\in B\\}\\)——“至少满足一个”，注意这里的“或”包含“两者都满足”。</li>'
         + '<li><b>补集</b>：先给定全集 \\(U\\)，则 \\(A\\) 在 \\(U\\) 中的补集 \\(\\complement_{U}A=\\{x\\mid x\\in U\\ \\text{且}\\ x\\notin A\\}\\)。补集必须<b>先说清全集</b>，全集变了，补集就变。</li>'
         + '</ul>'
-        + '<p>三个运算最容易混用的是交集与并集，请看下图。</p>'
-        + DSHFig.use('c1-venn-ops')
+
         + '<p><b>常用运算律</b>（都可以用“元素归属分析”证明，即讨论 \\(x\\) 是否属于各个集合）：</p>'
         + '\\[A\\cap B=B\\cap A,\\qquad A\\cup B=B\\cup A,\\qquad A\\cap A=A,\\qquad A\\cup A=A,\\]'
         + '\\[A\\cap\\varnothing=\\varnothing,\\qquad A\\cup\\varnothing=A,\\qquad A\\cap(\\complement_{U}A)=\\varnothing,\\qquad A\\cup(\\complement_{U}A)=U.\\]'
@@ -81,8 +78,7 @@ DSHData.registerKnowledge({
         + '<li>\\(A\\cap B=A\\iff A\\subseteq B\\)；\\(A\\cup B=A\\iff B\\subseteq A\\)。遇到这类条件，先化成包含关系再讨论。</li>'
         + '<li>\\(A\\subseteq B\\) 且 \\(A\\) 中含参数时，若 \\(A\\) 可能是空集，必须<b>单独讨论 \\(A=\\varnothing\\)</b>，再用“端点比较”处理 \\(A\\ne\\varnothing\\) 的情形。</li>'
         + '</ul>'
-        + DSHFig.row([{ id: 'c1-venn-ops' }, { id: 'c1-subset-count' }])
-        + '<p class="small muted">读图提示：左图为运算的韦恩图表示；右图把 \\(\{a,b,c\}\\) 的全部子集按“元素个数”分层排列，可以边看图边数出 \\(2^{3}=8\\) 个。</p>'
+
     },
     {
       title: '五、从集合角度看充分条件、必要条件与充要条件',
@@ -100,8 +96,7 @@ DSHData.registerKnowledge({
         + '<li>“\\(x^{2}=1\\)”是“\\(x=1\\)”的必要不充分条件，因为 \\(\{1\\}\\subsetneq\\{-1,1\\}\\)。</li>'
         + '</ul>'
         + '<p>写集合时必须注意“代表元素”的写法：\\(\{x\\mid y=x^{2}\\}\\) 是函数 \\(y=x^{2}\\) 的定义域 \\((-\\infty,+\\infty)\\)，而 \\(\{y\\mid y=x^{2}\\}\\) 是它的值域 \\([0,+\\infty)\\)，两者完全不同。看集合先看竖线前写的是什么字母。</p>'
-        + DSHFig.use('logic-implication')
-        + '<p class="small muted">读图提示：内圈 \\(P\\)、外圈 \\(Q\\)，\\(P\\subseteq Q\\) 正对应“\\(p\\) 充分、\\(q\\) 必要”；若两圈重合即为充要条件。</p>'
+
     }
   ],
   proofs: [
@@ -142,7 +137,6 @@ DSHData.registerKnowledge({
       note: '方法提炼：证明集合相等（无论用列举法还是描述法）的标准流程是“任取—代入条件—改写形式—回代”，即分别证两个包含关系，而不要只举几个例子。'
     }
   ],
-  figures: ['c1-set-represent', 'c1-venn-ops', 'c1-subset-count', 'c1-sufficient'],
   types: [
     '集合的表示与元素互异性求参数',
     '交、并、补运算及韦恩图应用',

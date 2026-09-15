@@ -19,10 +19,8 @@ DSHData.registerKnowledge({
         '<p>由弧长公式可以说明角度与弧度的换算关系：整个圆周长为 \\(2\\pi r\\)，对应的圆心角是 \\(360^{\\circ}\\)，故</p>' +
         '\\[2\\pi\\ \\text{rad}=360^{\\circ},\\qquad \\pi\\ \\text{rad}=180^{\\circ}.\\]' +
         '<p>由此得到 \\(1^{\\circ}=\\frac{\\pi}{180}\\) rad，\\(1\\ \\text{rad}=\\left(\\frac{180}{\\pi}\\right)^{\\circ}\\approx57.3^{\\circ}\\)。常用换算：\\(30^{\\circ}=\\frac{\\pi}{6}\\)，\\(45^{\\circ}=\\frac{\\pi}{4}\\)，\\(60^{\\circ}=\\frac{\\pi}{3}\\)，\\(90^{\\circ}=\\frac{\\pi}{2}\\)，\\(180^{\\circ}=\\pi\\)。</p>' +
-        '<p>采用弧度制后，角的集合与实数集之间建立了一一对应，三角函数才真正成为以实数为自变量的函数；同时 \\(\\lim_{x\\to0}\\frac{\\sin x}{x}=1\\) 等分析结论也只有在弧度制下才成立。</p>' +
-        '<p><b>读图提示：</b>下图是 \\(y=2\\sin\\left(2x+\\frac{\\pi}{3}\\right)\\) 的图像。横轴上的 \\(-\\frac{\\pi}{6}\\)、\\(\\frac{\\pi}{12}\\)、\\(\\frac{\\pi}{2}\\) 等刻度只有用弧度制表示时才便于与 \\(\\pi\\) 建立比例关系；用角度制写既罗嗦，也无法直接看出周期 \\(\\pi\\) 与相位 \\(\\frac{\\pi}{3}\\) 的对应。</p>' +
-        DSHFig.use('c8-y-asin')
-    },
+        '<p>采用弧度制后，角的集合与实数集之间建立了一一对应，三角函数才真正成为以实数为自变量的函数；同时 \\(\\lim_{x\\to0}\\frac{\\sin x}{x}=1\\) 等分析结论也只有在弧度制下才成立。</p>' 
+},
     {
       title: '二、任意角三角函数的定义与符号',
       tag: '概念',
@@ -31,10 +29,8 @@ DSHData.registerKnowledge({
         '<p>也就是说：<b>余弦是交点的横坐标，正弦是交点的纵坐标，正切是纵坐标与横坐标之比</b>。因为交点总在单位圆上，所以 \\(|x|\\le1\\)，\\(|y|\\le1\\)，从而 \\(-1\\le\\sin\\alpha\\le1\\)，\\(-1\\le\\cos\\alpha\\le1\\)。</p>' +
         '<p>由定义可直接得到函数值的符号规律：\\(\\sin\\alpha\\) 的符号与 \\(y\\) 一致，\\(\\cos\\alpha\\) 的符号与 \\(x\\) 一致，\\(\\tan\\alpha\\) 的符号由 \\(x\\)、\\(y\\) 是否同号决定。于是有“一全正、二正弦、三正切、四余弦”的口诀。</p>' +
         '<p>正切的定义域要特别留意：当终边落在 \\(y\\) 轴上时 \\(x=0\\)，\\(\\tan\\alpha\\) 无意义，故正切函数的定义域是 \\(\\left\\{\\alpha\\ \\middle|\\ \\alpha\\ne\\frac{\\pi}{2}+k\\pi,\\ k\\in Z\\right\\}\\)。</p>' +
-        '<p>若改用终边上任意一点 \\(Q(x,y)\\)（\\(r=\\sqrt{x^{2}+y^{2}}>0\\)）来定义，则有 \\(\\sin\\alpha=\\frac yr\\)，\\(\\cos\\alpha=\\frac xr\\)，\\(\\tan\\alpha=\\frac yx\\)。这与单位圆定义是一致的：把 \\(Q\\) 按比例压到单位圆上，坐标变为 \\(\\left(\\frac xr,\\frac yr\\right)\\)。</p>' +
-        DSHFig.use('unit-circle-def') +
-        DSHFig.use('c8-unit-circle-signs')
-    },
+        '<p>若改用终边上任意一点 \\(Q(x,y)\\)（\\(r=\\sqrt{x^{2}+y^{2}}>0\\)）来定义，则有 \\(\\sin\\alpha=\\frac yr\\)，\\(\\cos\\alpha=\\frac xr\\)，\\(\\tan\\alpha=\\frac yx\\)。这与单位圆定义是一致的：把 \\(Q\\) 按比例压到单位圆上，坐标变为 \\(\\left(\\frac xr,\\frac yr\\right)\\)。</p>' 
+},
     {
       title: '三、同角三角函数的基本关系',
       tag: '公式',
@@ -49,9 +45,8 @@ DSHData.registerKnowledge({
         '<li><b>齐次式求值：</b>求 \\(\\frac{a\\sin\\alpha+b\\cos\\alpha}{c\\sin\\alpha+d\\cos\\alpha}\\) 时，分子分母同除以 \\(\\cos\\alpha\\)，化为只含 \\(\\tan\\alpha\\) 的式子。</li>' +
         '<li><b>化简与证明：</b>把“切”化为“弦”，或利用 \\(1=\\sin^{2}\\alpha+\\cos^{2}\\alpha\\) 作整体代换。</li>' +
         '</ul>' +
-        '<p>由平方关系还可以推出一个常用变形：\\((\\sin\\alpha+\\cos\\alpha)^{2}=1+2\\sin\\alpha\\cos\\alpha\\)，\\((\\sin\\alpha-\\cos\\alpha)^{2}=1-2\\sin\\alpha\\cos\\alpha\\)。因此只要知道 \\(\\sin\\alpha+\\cos\\alpha\\)、\\(\\sin\\alpha-\\cos\\alpha\\)、\\(\\sin\\alpha\\cos\\alpha\\) 三者中的一个，就能求出另外两个。</p>' +
-        DSHFig.use('c8-induction')
-    },
+        '<p>由平方关系还可以推出一个常用变形：\\((\\sin\\alpha+\\cos\\alpha)^{2}=1+2\\sin\\alpha\\cos\\alpha\\)，\\((\\sin\\alpha-\\cos\\alpha)^{2}=1-2\\sin\\alpha\\cos\\alpha\\)。因此只要知道 \\(\\sin\\alpha+\\cos\\alpha\\)、\\(\\sin\\alpha-\\cos\\alpha\\)、\\(\\sin\\alpha\\cos\\alpha\\) 三者中的一个，就能求出另外两个。</p>' 
+},
     {
       title: '四、诱导公式与和差角公式',
       tag: '公式',
@@ -71,9 +66,8 @@ DSHData.registerKnowledge({
         '<p>其中 \\(\\cos 2\\alpha\\) 的三种形式（升幂与降幂）在化简中极为常用，例如 \\(1+\\cos 2\\alpha=2\\cos^{2}\\alpha\\)，\\(1-\\cos 2\\alpha=2\\sin^{2}\\alpha\\)。</p>' +
         '<p><b>（4）辅助角公式。</b>对 \\(a\\sin x+b\\cos x\\)（\\(a,b\\) 不同时为 0），</p>' +
         '\\[a\\sin x+b\\cos x=\\sqrt{a^{2}+b^{2}}\\,\\sin(x+\\varphi),\\qquad \\tan\\varphi=\\frac ba.\\]' +
-        '<p>它把“同名不同系数的两项”合并成一个正弦型函数，是求最值与周期的关键工具。例如 \\(\\sin x+\\sqrt3\\cos x=2\\sin\\left(x+\\frac{\\pi}{3}\\right)\\)。</p>' +
-        DSHFig.use('c8-y-asin')
-    },
+        '<p>它把“同名不同系数的两项”合并成一个正弦型函数，是求最值与周期的关键工具。例如 \\(\\sin x+\\sqrt3\\cos x=2\\sin\\left(x+\\frac{\\pi}{3}\\right)\\)。</p>' 
+},
     {
       title: '五、三角函数的图像与性质',
       tag: '图像',
@@ -89,9 +83,8 @@ DSHData.registerKnowledge({
         '<tr><td>单调增区间</td><td>\\(\\left[-\\frac{\\pi}{2}+2k\\pi,\\frac{\\pi}{2}+2k\\pi\\right]\\)</td><td>\\([-\\pi+2k\\pi,2k\\pi]\\)</td><td>\\(\\left(-\\frac{\\pi}{2}+k\\pi,\\frac{\\pi}{2}+k\\pi\\right)\\)</td></tr>' +
         '</tbody></table>' +
         '<p><b>读图要点：</b>正弦、余弦曲线都被夹在两条水平直线 \\(y=1\\) 与 \\(y=-1\\) 之间，波形相同、相位相差 \\(\\frac{\\pi}{2}\\)；正切曲线被 \\(x=\\frac{\\pi}{2}+k\\pi\\) 这些渐近线隔成一支一支，每一支都单调递增，且整体不是连续函数。</p>' +
-        '<p>对一般形式 \\(y=A\\sin(\\omega x+\\varphi)+B\\)（\\(A>0\\)，\\(\\omega>0\\)）有：振幅为 \\(A\\)，最小正周期 \\(T=\\frac{2\\pi}{\\omega}\\)，值域为 \\([B-A,B+A]\\)，初相为 \\(\\varphi\\)。“五点法”作图时，令 \\(\\omega x+\\varphi\\) 依次取 \\(0,\\frac{\\pi}{2},\\pi,\\frac{3\\pi}{2},2\\pi\\)，求出相应的五个关键点即可。</p>' +
-        DSHFig.row([{ id: 'c8-sin-cos-graph' }, { id: 'c8-tan-graph' }])
-    }
+        '<p>对一般形式 \\(y=A\\sin(\\omega x+\\varphi)+B\\)（\\(A>0\\)，\\(\\omega>0\\)）有：振幅为 \\(A\\)，最小正周期 \\(T=\\frac{2\\pi}{\\omega}\\)，值域为 \\([B-A,B+A]\\)，初相为 \\(\\varphi\\)。“五点法”作图时，令 \\(\\omega x+\\varphi\\) 依次取 \\(0,\\frac{\\pi}{2},\\pi,\\frac{3\\pi}{2},2\\pi\\)，求出相应的五个关键点即可。</p>' 
+}
   ],
 
   proofs: [
@@ -134,7 +127,6 @@ DSHData.registerKnowledge({
     }
   ],
 
-  figures: ['c8-unit-circle-signs', 'c8-sin-cos-graph', 'c8-tan-graph', 'c8-y-asin', 'c8-induction'],
 
   types: [
     '三角函数化简、求值与恒等式证明',

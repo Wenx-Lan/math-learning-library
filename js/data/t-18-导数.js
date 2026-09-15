@@ -1,6 +1,6 @@
 /*!
  * t-18-导数.js —— 第 18 章「导数」题型
- * 依赖：js/app.js（DSHData）、js/data/fig-18.js
+ * 依赖：js/app.js（DSHData）
  */
 DSHData.registerTypes({
   id: 18,

@@ -6,9 +6,8 @@
  *   DSHData.registerKnowledge({
  *     id: 1, name: '集合', group: '必修·代数基础',
  *     brief: '一句话概括',
- *     sections: [ { title, html } ],                       // 概念讲解（html 内可用 \(..\) 公式与 DSHFig.use('id') 简图）
+ *     sections: [ { title, html } ],                       // 概念讲解（html 内可用 \(..\) 公式）
  *     proofs:   [ { title, claim, steps: [..], note } ],   // 证明 / 推导
- *     figures:  [ 'fig-id', ... ],                         // 本页重点简图（可省略）
  *     types:    [ '元素互异性求参数', ... ]                 // 本页关联题型（可省略）
  *   });
  *   DSHData.registerTypes({
@@ -219,12 +218,6 @@
       return DSHData.types[id] || null;
     }).catch(function () { return null; });
   }
-  function ensureIllustrations(id) {
-    var meta = (DSHData.index || {})[String(id)] || {};
-    if (!meta.figFile) { return Promise.resolve('skip'); }
-    return loadScript(meta.figFile).catch(function () { return 'fail'; });
-  }
-
   /* ============================================================
      3.5 答案字段容错：把裸露的 LaTeX（如 \sqrt{3}）补上 \( \)，使其能正常渲染
      ------------------------------------------------------------
@@ -342,28 +335,21 @@
     var frag = document.createDocumentFragment();
     frag.appendChild(h('div', { class: 'page-head' }, [
       h('h1', null, '高中数学学习资源库'),
-      h('p', null, '基础知识与题型训练双栏结构：先读图与证明理解概念，再按题型自测。全部内容离线可用。')
+      h('p', null, '基础知识与题型训练双栏结构：先读概念与证明理解，再按题型自测。全部内容离线可用。')
     ]));
 
     var total = DSHData.order.length;
-    var totalQ = 0, totalEx = 0, typeCount = 0;
-    DSHData.order.forEach(function (id) {
-      var t = DSHData.types[id];
-      if (t && t.types) {
-        typeCount += t.types.length;
-        t.types.forEach(function (ty) {
-          totalQ += (ty.questions || []).length;
-          totalEx += (ty.examples || []).length;
-        });
-      }
-    });
+    var stats = DSHData.stats || {};
+    var typeCount = stats.types || 0;
+    var totalQ = stats.questions || 0;
+    var totalEx = stats.examples || 0;
 
     frag.appendChild(h('div', { class: 'card' }, [
       h('div', { class: 'card__head' }, [h('h2', null, '开始学习')]),
       h('div', { class: 'toc-grid' }, [
         h('a', { href: '#/knowledge' }, [
           h('span', { class: 'sidebar__num' }, 'Ⅰ'),
-          h('span', null, '基础知识（18 章 · 概念 + 简图 + 证明）')
+          h('span', null, '基础知识（18 章 · 概念 + 证明）')
         ]),
         h('a', { href: '#/types' }, [
           h('span', { class: 'sidebar__num' }, 'Ⅱ'),
@@ -414,7 +400,7 @@
     var frag = document.createDocumentFragment();
     frag.appendChild(h('div', { class: 'page-head' }, [
       h('h1', null, '基础知识'),
-      h('p', null, '每章包含：概念梳理、辅助理解简图、证明与推导、关联题型入口。')
+      h('p', null, '每章包含：概念梳理、证明与推导、关联题型入口。')
     ]));
     var grid = h('div', { class: 'toc-grid' });
     DSHData.order.forEach(function (id) {
@@ -435,8 +421,7 @@
     main.innerHTML = '';
     main.appendChild(h('div', { class: 'notice' }, '正在载入第 ' + id + ' 章…'));
 
-    Promise.all([ensureIllustrations(id), ensureKnowledge(id)]).then(function (res) {
-      var k = res[1];
+    ensureKnowledge(id).then(function (k) {
       if (!k) {
         main.innerHTML = '';
         main.appendChild(errorCard(id, '基础知识'));
@@ -447,30 +432,6 @@
         h('h1', null, [h('span', null, '第 ' + id + ' 章　'), h('span', titleText(k.name || ''))]),
         h('p', null, k.brief || (DSHData.index[String(id)] || {}).brief || '')
       ]));
-
-      // 简图速览
-      var figIds = k.figures || [];
-      if (!figIds.length && k.sections) {
-        k.sections.forEach(function (s) {
-          var m = String(s.html || '').match(/DSHFig\.use\('([^']+)'/g) || [];
-          m.forEach(function (x) {
-            var g = /DSHFig\.use\('([^']+)'/.exec(x);
-            if (g && figIds.indexOf(g[1]) < 0) { figIds.push(g[1]); }
-          });
-        });
-      }
-      if (figIds.length) {
-        var figs = figIds.filter(function (f) { return root.DSHFig && DSHFig.has(f); });
-        if (figs.length) {
-          frag.appendChild(h('div', { class: 'card' }, [
-            h('div', { class: 'card__head' }, [
-              h('h2', null, '本章简图'),
-              h('span', { class: 'tag' }, figs.length + ' 幅')
-            ]),
-            h('div', { class: 'fig-grid', html: figs.map(function (f) { return DSHFig.use(f); }).join('') })
-          ]));
-        }
-      }
 
       // 概念讲解
       var secFrag = document.createDocumentFragment();
@@ -592,8 +553,7 @@
     main.innerHTML = '';
     main.appendChild(h('div', { class: 'notice' }, '正在载入第 ' + id + ' 章题型…'));
 
-    Promise.all([ensureIllustrations(id), ensureTypes(id)]).then(function (res) {
-      var t = res[1];
+    ensureTypes(id).then(function (t) {
       if (!t) {
         main.innerHTML = '';
         main.appendChild(errorCard(id, '题型'));

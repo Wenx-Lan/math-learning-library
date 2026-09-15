@@ -1,6 +1,6 @@
 /*!
  * t-17-解析几何.js —— 第 17 章「解析几何」题型
- * 依赖：js/app.js（DSHData）、js/data/fig-17.js
+ * 依赖：js/app.js（DSHData）
  */
 DSHData.registerTypes({
   id: 17,

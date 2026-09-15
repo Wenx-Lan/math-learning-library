@@ -1,6 +1,6 @@
 # 高中数学学习资源库
 
-一个**纯静态、零依赖、可离线运行**的高中数学学习网站：把 18 章（人教 A 版必修 + 选择性必修）内容组织成「基础知识」与「题型」两条主线，供高中生课前梳理概念、课中读图理解、课后按题型自测。界面共三处：**基础知识**（每章：概念讲解 / 本章简图 / 证明与推导 / 关联题型）、**题型**（每章：题型主界面、例题、答案三个副界面），以及首页目录。没有账号、没有后端、没有构建步骤，双击前请先看 [3.2](#32-为什么不建议直接双击-indexhtml)。
+一个**纯静态、零依赖、可离线运行**的高中数学学习网站：把 18 章（人教 A 版必修 + 选择性必修）内容组织成「基础知识」与「题型」两条主线，供高中生课前梳理概念、课中理解、课后按题型自测。界面共三处：**基础知识**（每章：概念讲解 / 证明与推导 / 关联题型）、**题型**（每章：题型主界面、例题、答案三个副界面），以及首页目录。没有账号、没有后端、没有构建步骤，双击前请先看 [3.2](#32-为什么不建议直接双击-indexhtml)。
 
 ## 一、项目简介
 
@@ -9,7 +9,6 @@
 | 形态 | 纯静态站点，仅 HTML / CSS / JavaScript，无框架、无打包、无 npm 依赖 |
 | 内容 | `js/data/` 下按章存放的数据文件（内容与程序完全分离） |
 | 公式 | 自研 `js/math.js`，把 `\( ... \)` 形式的 LaTeX 子集渲染为浏览器原生 MathML，**不联网、无 CDN** |
-| 简图 | 内联 SVG，由 `js/illustrations.js` 的轻量绘图 API 生成，样式统一由 CSS 控制 |
 | 进度 | 作答进度保存在浏览器 `localStorage`，不经过任何服务器 |
 
 ## 二、目录结构
@@ -20,20 +19,16 @@
 ├─ README.md             本文件
 ├─ 高中数学.txt           内容大纲原文（撰写 k-*/t-* 数据的依据，不参与页面运行）
 ├─ css/
-│  ├─ styles.css         主题与布局：:root 主题变量、卡片、题目、简图、响应式、打印样式
 │  └─ math.css           数学排版层：MathML 字体、行高、块级公式间距、旧内核兜底
 ├─ js/
 │  ├─ app.js             主程序：DSHData 注册中心、哈希路由、视图渲染、判分、进度存储
 │  ├─ math.js            离线公式渲染器（LaTeX 子集 → MathML），对外 API：DSHMath
-│  ├─ illustrations.js   内联 SVG 简图库 + 简图注册表，对外 API：DSHFig
-│  ├─ illustrations-data.js  9 张通用简图原语（sys-axes、num-line、venn-two、sin-curve 等）
 │  └─ data/
 │     ├─ manifest.js     章节目录：DSHData.setManifest / DSHData.index / DSHData.order
-│     ├─ fig-<章号>.js   该章简图定义（DSHFig.add）
 │     ├─ k-<章号>-<章名>.js  该章「基础知识」数据（DSHData.registerKnowledge）
 │     └─ t-<章号>-<章名>.js  该章「题型」数据（DSHData.registerTypes）
 ├─ docs/
-│  └─ 数据格式说明.md      内容数据的唯一格式契约（字段、LaTeX 子集、绘图 API、硬性要求）
+│  └─ 数据格式说明.md      内容数据的唯一格式契约（字段、LaTeX 子集、LaTeX 子集、硬性要求）
 ├─ tools/
 │  ├─ check.js           离线自检脚本（Node.js）：语法检查 + 数据体检 + 公式渲染冒烟测试
 │  ├─ selftest.html      浏览器内自检页（逐项核对 54 个数据文件与结构契约）
@@ -61,7 +56,7 @@ npx --yes http-server -p 8000 -c-1 .
 
 ### 3.2 为什么不建议直接双击 index.html
 
-章节数据**不是**写死在 HTML 里的：`js/app.js` 会在切换章节时用 `document.createElement('script')` 动态注入 `js/data/fig-*.js`、`k-*.js`、`t-*.js`。这种「按需动态加载」在 `file://` 协议下并不可靠——各浏览器对本地文件的子资源、动态脚本和 `localStorage` 的策略不一致（有的按不透明源 `null` 处理并拦截请求，有的直接拒绝脚本加载），因此**能否成功完全取决于浏览器和本地策略，不能作为交付方式**。
+章节数据**不是**写死在 HTML 里的：`js/app.js` 会在切换章节时用 `document.createElement('script')` 动态注入 `js/data/k-*.js`、`t-*.js`。这种「按需动态加载」在 `file://` 协议下并不可靠——各浏览器对本地文件的子资源、动态脚本和 `localStorage` 的策略不一致（有的按不透明源 `null` 处理并拦截请求，有的直接拒绝脚本加载），因此**能否成功完全取决于浏览器和本地策略，不能作为交付方式**。
 
 直接双击时通常会看到：
 
@@ -100,8 +95,7 @@ npx --yes http-server -p 8000 -c-1 .
 自上而下依次是：
 
 1. **页首**：第 N 章 + 章名 + 一句话定位（来自数据的 `brief`）。
-2. **本章简图**：该章重点简图汇总（数据里的 `figures` 列表；若未提供，会自动扫描正文中 `DSHFig.use('...')` 引用过的图）。
-3. **概念讲解**：每节一张卡片，标题右侧可带「概念 / 方法」等标签，正文中图文混排。
+3. **概念讲解**：每节一张卡片，标题右侧可带「概念 / 方法」等标签，正文中正文。
 4. **证明与推导**：可折叠条目（`<details>`），第一条默认展开，内含证明目标、分步推理和结尾的 ∎ 记号。
 5. **关联题型**：题型名称芯片，点击后跳到对应章节的题型页并**自动定位**到该题型卡片；下方还有「前往题型训练 →」与「← 返回目录」按钮。
 
@@ -145,31 +139,25 @@ npx --yes http-server -p 8000 -c-1 .
 | 章节目录 | `js/data/manifest.js` | 18 章清单，已写好 |
 | 基础知识 | `js/data/k-<章号>-<章名>.js` | `js/data/k-1-集合.js`、`js/data/k-6-指数及指数函数.js` |
 | 题型 | `js/data/t-<章号>-<章名>.js` | `js/data/t-1-集合.js`、`js/data/t-18-导数.js` |
-| 简图 | `js/data/fig-<章号>.js` | `js/data/fig-1.js`、`js/data/fig-10.js` |
 
 - `<章号>` 与 `<章名>` 必须与 `manifest.js` 中该章的 `slug` **完全一致**（章名即目录里显示的名字，如 `一元二次不等式`、`直线与圆`，不含空格）。
-- 简图文件名只带章号，不带章名。
 - 动态加载依赖这些路径拼装，文件名写错会直接 404，页面显示「数据文件缺失或加载失败」。文件名可以在 `js/data/` 目录下对照现有章节照抄。
 
 ### 5.2 新增一章要改哪些地方
 
-以新增第 19 章为例，共 4 处：
+以新增第 19 章为例，共 3 处：
 
 1. **`js/data/manifest.js`**（三处都要加）：
-   - `DSHData.setManifest({ ... })`：加一条 `'19': { slug: '章名', figFile: 'js/data/fig-19.js' }`；
-   - `DSHData.index = { ... }`：加一条 `'19': { name: '章名', group: '模块名', slug: '章名', figFile: 'js/data/fig-19.js', brief: '一句话定位' }`；
+   - `DSHData.setManifest({ ... })`：加一条 `'19': { slug: '章名' }`；
+   - `DSHData.index = { ... }`：加一条 `'19': { name: '章名', group: '模块名', slug: '章名', brief: '一句话定位' }`；
    - `DSHData.order = [ ... ]`：把 `19` 追加到数组末尾（决定侧栏与目录顺序）。
-2. **新建 `js/data/fig-19.js`**：用 `DSHFig.add('图id', { title, caption, coord | viewBox, draw })` 注册本章简图。
-3. **新建 `js/data/k-19-<章名>.js`**：`DSHData.registerKnowledge({ id: 19, name, group, brief, sections, proofs, figures, types })`。
-4. **新建 `js/data/t-19-<章名>.js`**：`DSHData.registerTypes({ id: 19, name, brief, types: [ { id, name, desc, points, questions, examples } ] })`。
+2. **新建 `js/data/k-19-<章名>.js`**：`DSHData.registerKnowledge({ id: 19, name, group, brief, sections, proofs, types })`。
+3. **新建 `js/data/t-19-<章名>.js`**：`DSHData.registerTypes({ id: 19, name, brief, types: [ { id, name, desc, points, questions, examples } ] })`。
 
 完成后运行 [5.4 自检](#54-如何自检)，再在浏览器里打开 `#/knowledge/19` 与 `#/types/19` 复核渲染效果。
 
-### 5.3 简图与公式的写法
+### 5.3 公式的写法
 
-- **简图**：在数据文件的 `html` 字段里直接拼字符串即可，例如
-  `html: '<p>两集合的公共部分如下图。</p>' + DSHFig.use('c1-venn-ops')`；
-  需要并排两张时用 `DSHFig.row([{ id: 'c1-venn-ops' }, { id: 'c1-subset-count' }])`。图本身必须在 `fig-<章号>.js` 中用 `DSHFig.add(...)` 定义好；`fig-*.js` 会先于同章的 `k-*/t-*` 加载，所以正文只能引用**本章已定义**的图或 `illustrations-data.js` 里的 9 张通用图。
 - **公式**：行内写 `\( ... \)`，独立成行写 `\[ ... \]`（渲染器也识别 `$$ ... $$`）。**不要**在数据文件里手动调用 `DSHMath`——页面渲染完成后会统一扫描并替换。裸写 `^ _ \frac` 不会被渲染；上下标超过一个字符要加花括号（`x_{1}`、`a^{n+1}`）；中文要放进 `\text{...}`。
 
 ### 5.4 如何自检
@@ -180,10 +168,8 @@ npx --yes http-server -p 8000 -c-1 .
 node tools/check.js
 ```
 
-它会做四件事：① 对 `js/` 下所有 `.js` 做语法编译检查；② 在伪浏览器沙箱中实际加载 `manifest.js` + 核心脚本 + 各章 `fig-*/k-*/t-*`；③ 按 `docs/数据格式说明.md` 的硬性要求校验数据（每章 `sections ≥ 4`、`proofs ≥ 2`、每个题型 3~4 题且 `kind` 合法、选择题 4 个选项且答案 A~D、题目/例题 id 唯一、`solution` 不得过短、`\(` 与 `\)` 数量配对、引用的简图 id 必须存在等）；④ 打印逐章统计并跑一组公式渲染冒烟测试。**退出码非 0 表示存在错误**，警告（缺少 `fig-*`、`sections` 不足、题型种类单一等）不影响退出码。
 
 > 另外还有两个自检入口：**`tools/selftest.html`**（浏览器内自检页，逐项核对 54 个数据文件与结构契约）和 **`tools/validate.md`**（自动 + 人工验收清单）。
-> `tools/_tmp/` 下是开发期使用的诊断脚本（`renderall.js` 全站公式渲染审计、`figsmoke.js` 简图渲染冒烟、`figrefs.js` 简图引用核对、`textbare.js` 裸露公式扫描等），可随时删除，不影响站点运行。
 
 ### 5.5 交付时的自动化验证结果
 
@@ -191,8 +177,6 @@ node tools/check.js
 | --- | --- | --- |
 | 语法 + 数据结构 | `node tools/check.js` | 18 章 / 54 个数据文件全部加载；**0 错误 0 警告** |
 | 公式渲染 | `node tools/_tmp/renderall.js` | **15059 个公式全部渲染成功**，0 失败、0 残留命令 |
-| 简图渲染 | `node tools/_tmp/figsmoke.js` | **78 张简图全部构建成功**（严格 DOM 桩，不会放过嵌套数组等隐患） |
-| 简图引用 | `node tools/_tmp/figrefs.js` | 74 个被引用的简图 id 全部已注册，0 缺失 |
 | 裸露公式 | `node tools/_tmp/textbare.js` | 正文中未包裹定界符的 LaTeX：**0 处** |
 | 坏转义 | `node tools/_tmp/scan-newline.js` | 字符串中残留的控制字符（`\t`/`\f`/`\v` 被误解析）：**0 处** |
 
@@ -202,7 +186,6 @@ node tools/check.js
 | --- | --- |
 | 依赖 | 零依赖：无 npm、无打包、无构建步骤；`app.js` 用原生 DOM API 构建视图，`escape`/判分/存储均为手写 |
 | 公式 | `js/math.js` 自研词法+语法分析器，输出 MathML 交由浏览器原生排版；支持集合（`\in \subseteq \varnothing \complement_U`）、分数 `\frac`、根式 `\sqrt` / `\sqrt[3]{}`、三角（`\sin^2\alpha`）、对数 `\log_a N`、极限 `\lim_{...}`、求和 `\sum_{k=0}^{n}`、向量 `\vec a`、分段 `\begin{cases}...\end{cases}`、矩阵/数组环境、上下标、重音、大运算符上下限等；未实现的命令不会抛错，而是退化为普通文本显示 |
-| 简图 | `js/illustrations.js` 提供坐标系数值化 API（`axes/fn/poly/seg/circle/dot/text/vline/hline/rightAngle/angleArc/region`）与自由绘图方式（`viewBox` + 原始 SVG 节点）；绘图只看数学坐标，颜色与线型由 `css/styles.css` 的 `.fig svg .curve/.ax/.shape/.hl/...` 决定，因此**数据文件里不要写颜色** |
 | 主题 | `css/styles.css` 顶部 `:root` 集中定义 `--bg / --surface / --ink / --accent / --ok / --warn / --bad` 等灰白主题变量，改配色只需改这一处；`css/math.css` 只负责数学排版 |
 | 响应式 | 断点 `900px`：侧栏移到正文下方、单列布局；`560px`：缩小字号与内边距、答题框收窄 |
 | 打印 | `@media print` 隐藏页头、侧栏、副界面标签与按钮，并展开折叠的解析，便于直接打印或「打印为 PDF」 |
@@ -210,9 +193,9 @@ node tools/check.js
 
 ## 七、已知限制与后续可扩展方向
 
-1. **数据按需动态加载，需要 http 环境**：这是无构建步骤的代价。各章 `k-*`/`t-*`/`fig-*` 文件由 `app.js` 根据 `manifest.js` 的目录动态注入 `<script>`，因此在 `file://` 下会被浏览器的本地文件策略拦截（页面会给出「请用本地服务器打开」的提示卡）。如需彻底支持双击打开，可把各章数据改为内联 `<script>`（取消动态注入），或提供一个把所有数据打包进单 HTML 的导出脚本。
+1. **数据按需动态加载，需要 http 环境**：这是无构建步骤的代价。各章 `k-*`/`t-*` 文件由 `app.js` 根据 `manifest.js` 的目录动态注入 `<script>`，因此在 `file://` 下会被浏览器的本地文件策略拦截（页面会给出「请用本地服务器打开」的提示卡）。如需彻底支持双击打开，可把各章数据改为内联 `<script>`（取消动态注入），或提供一个把所有数据打包进单 HTML 的导出脚本。
 3. **没有搜索**：`#/search/...` 形式的哈希已被路由解析，但尚无对应界面（会回落到首页）。数据加载后都在内存里，增加站内搜索（标题/题干/要点关键字）成本不高。
 4. **进度仅存本地**：`localStorage` 记录会随清理站点数据而丢失，且无法跨设备同步；可扩展错题本（收集判错的题）、进度导出/导入（JSON 文件）等。
 5. **简答题不自动判分**：当前设计是「自行书写 → 对照解析 → 手动标记掌握」，避免用关键词匹配误判数学表达；如需自动评阅，须引入更复杂的等价性判定。
 6. **打印/PDF 只是基础样式**：已有打印样式，但未做分页控制与整册导出；可增加「打印本章」「导出为 PDF」按钮。
-7. **内容维护**：18 章的 `fig-*`、`k-*`、`t-*` 文件已全部就位；新增或重写某一章时，按 `docs/数据格式说明.md` 的契约放置文件，并用 `node tools/check.js`（离线体检）与 `tools/selftest.html`（浏览器自检）逐项核对。特别提醒：数据文件里的公式定界符必须写成 `'\\( ... \\)'`，写成单反斜杠会把 `\t`、`\f` 变成控制字符而损坏公式。
+7. **内容维护**：18 章的 `k-*`、`t-*` 文件已全部就位；新增或重写某一章时，按 `docs/数据格式说明.md` 的契约放置文件，并用 `node tools/check.js`（离线体检）与 `tools/selftest.html`（浏览器自检）逐项核对。特别提醒：数据文件里的公式定界符必须写成 `'\\( ... \\)'`，写成单反斜杠会把 `\t`、`\f` 变成控制字符而损坏公式。

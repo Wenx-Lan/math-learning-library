@@ -25,9 +25,8 @@ DSHData.registerKnowledge({
         '<li><b>减法：</b>\\(\\vec a-\\vec b=\\vec a+(-\\vec b)\\)，几何上 \\(\\overrightarrow{AB}=\\overrightarrow{OB}-\\overrightarrow{OA}\\)，即“终点减起点”。</li>' +
         '<li><b>数乘：</b>\\(\\lambda\\vec a\\) 仍是一个向量。当 \\(\\lambda>0\\) 时与 \\(\\vec a\\) 同向，\\(\\lambda&lt;0\\) 时反向，\\(\\lambda=0\\) 时为零向量；且 \\(|\\lambda\\vec a|=|\\lambda||\\vec a|\\)。</li>' +
         '</ul>' +
-        '<p>共线向量定理：向量 \\(\\vec b\\) 与非零向量 \\(\\vec a\\) 共线，当且仅当存在唯一实数 \\(\\lambda\\)，使 \\(\\vec b=\\lambda\\vec a\\)。这条定理是把“平行”翻译成“成比例”的关键。</p>' +
-        DSHFig.use('c9-vector-add')
-    },
+        '<p>共线向量定理：向量 \\(\\vec b\\) 与非零向量 \\(\\vec a\\) 共线，当且仅当存在唯一实数 \\(\\lambda\\)，使 \\(\\vec b=\\lambda\\vec a\\)。这条定理是把“平行”翻译成“成比例”的关键。</p>' 
+},
     {
       title: '二、平面向量基本定理与坐标表示',
       tag: '概念',
@@ -43,9 +42,8 @@ DSHData.registerKnowledge({
         '<li>\\(\\lambda\\vec a=(\\lambda x_{1},\\ \\lambda y_{1})\\)；</li>' +
         '<li>\\(\\overrightarrow{AB}=\\overrightarrow{OB}-\\overrightarrow{OA}=(x_{2}-x_{1},\\ y_{2}-y_{1})\\)，即“终点坐标减起点坐标”。</li>' +
         '</ul>' +
-        '<p>因此向量运算可以完全“代数化”：几何中的平移、共线、长度问题都能化为坐标的加减乘除。</p>' +
-        DSHFig.use('c9-vector-coord')
-    },
+        '<p>因此向量运算可以完全“代数化”：几何中的平移、共线、长度问题都能化为坐标的加减乘除。</p>' 
+},
     {
       title: '三、数量积及其坐标运算',
       tag: '公式',
@@ -67,9 +65,8 @@ DSHData.registerKnowledge({
         '<li><b>平行：</b>\\(\\vec a\\parallel\\vec b\\iff x_{1}y_{2}-x_{2}y_{1}=0\\)（\\(\\vec a\\)、\\(\\vec b\\) 非零）；</li>' +
         '<li><b>模与夹角：</b>\\(|\\vec a|=\\sqrt{x_{1}^{2}+y_{1}^{2}}\\)，\\(\\cos\\theta=\\frac{x_{1}x_{2}+y_{1}y_{2}}{\\sqrt{x_{1}^{2}+y_{1}^{2}}\\sqrt{x_{2}^{2}+y_{2}^{2}}}\\)。</li>' +
         '</ul>' +
-        '<p>数量积还满足下列运算律：\\(\\vec a\\cdot\\vec b=\\vec b\\cdot\\vec a\\)，\\((\\lambda\\vec a)\\cdot\\vec b=\\lambda(\\vec a\\cdot\\vec b)\\)，\\((\\vec a+\\vec b)\\cdot\\vec c=\\vec a\\cdot\\vec c+\\vec b\\cdot\\vec c\\)。但要注意它<strong>不满足结合律</strong>：\\((\\vec a\\cdot\\vec b)\\vec c\\) 与 \\(\\vec a(\\vec b\\cdot\\vec c)\\) 一般是不同的向量。</p>' +
-        DSHFig.use('c9-dot-projection')
-    },
+        '<p>数量积还满足下列运算律：\\(\\vec a\\cdot\\vec b=\\vec b\\cdot\\vec a\\)，\\((\\lambda\\vec a)\\cdot\\vec b=\\lambda(\\vec a\\cdot\\vec b)\\)，\\((\\vec a+\\vec b)\\cdot\\vec c=\\vec a\\cdot\\vec c+\\vec b\\cdot\\vec c\\)。但要注意它<strong>不满足结合律</strong>：\\((\\vec a\\cdot\\vec b)\\vec c\\) 与 \\(\\vec a(\\vec b\\cdot\\vec c)\\) 一般是不同的向量。</p>' 
+},
     {
       title: '四、投影、模与夹角的几何意义',
       tag: '方法',
@@ -84,9 +81,8 @@ DSHData.registerKnowledge({
         '<li>三点共线：\\(A\\)、\\(B\\)、\\(C\\) 共线 \\(\\iff\\overrightarrow{AC}=\\lambda\\overrightarrow{AB}\\)；若 \\(\\overrightarrow{OC}=x\\overrightarrow{OA}+y\\overrightarrow{OB}\\) 且 \\(x+y=1\\)，则 \\(A\\)、\\(B\\)、\\(C\\) 共线。</li>' +
         '<li>中线长公式：\\(AD\\) 为 \\(\\triangle ABC\\) 的中线时，\\(|\\overrightarrow{AD}|^{2}=\\frac{|\\overrightarrow{AB}|^{2}+|\\overrightarrow{AC}|^{2}}{2}-\\frac{|\\overrightarrow{BC}|^{2}}{4}\\)。</li>' +
         '<li>重心：\\(G\\) 为重心 \\(\\iff\\overrightarrow{GA}+\\overrightarrow{GB}+\\overrightarrow{GC}=\\vec 0\\)；垂心：\\(\\overrightarrow{HA}\\cdot\\overrightarrow{HB}=\\overrightarrow{HB}\\cdot\\overrightarrow{HC}=\\overrightarrow{HC}\\cdot\\overrightarrow{HA}\\)。</li>' +
-        '</ul>' +
-        DSHFig.use('c9-collinear')
-    }
+        '</ul>' 
+}
   ],
 
   proofs: [
@@ -132,7 +128,6 @@ DSHData.registerKnowledge({
     }
   ],
 
-  figures: ['c9-vector-add', 'c9-vector-coord', 'c9-dot-projection', 'c9-collinear'],
 
   types: [
     '向量的线性运算与坐标运算',

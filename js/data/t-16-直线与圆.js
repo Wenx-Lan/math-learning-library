@@ -1,6 +1,6 @@
 /*!
  * t-16-直线与圆.js —— 第 16 章「直线与圆」题型
- * 依赖：js/app.js（DSHData）、js/data/fig-16.js
+ * 依赖：js/app.js（DSHData）
  */
 DSHData.registerTypes({
   id: 16,
