@@ -30,7 +30,7 @@
         h.seg(3, 0, 4, 3, { cls: 'ax' }),
         h.seg(0, 0, 0, 4, { cls: 'hl' }),
         h.seg(3, 0, 0, 4, { cls: 'hl' }),
-        h.text(-4.4, 4.3, 'a=5, b=4, c=3, e=0.6', 'lbl--sm', 'start')
+        h.text(-5.5, -4.6, 'a=5, b=4, c=3, e=0.6', 'lbl--sm', 'start')
       ];
     }
   });
@@ -74,7 +74,7 @@
         h.fn(function (x) { return -2 * Math.sqrt(Math.max(0, x)); }, { from: 0, to: 4.3, cls: 'curve' }),
         h.vline(-1, { from: -4.2, to: 4.2, cls: 'hl' }),
         h.text(-1, 4.35, '准线 x=-1', 'lbl--sm'),
-        h.dot(1, 0, { label: 'F(1,0)', dx: -1.25, dy: -0.4, labelCls: 'lbl--sm' }),
+        h.dot(1, 0, { label: 'F(1,0)', dx: 0.35, dy: -0.45, labelCls: 'lbl--sm' }),
         h.dot(1, 2, { label: 'P', dx: 0.42, dy: 0.14, labelCls: 'lbl--sm' }),
         h.dot(-1, 2, { label: 'H', dx: -0.45, dy: 0.14, labelCls: 'lbl--sm' }),
         h.seg(1, 0, 1, 2, { cls: 'ax' }),

@@ -82,7 +82,7 @@
         h.fn(function (x) { return x * x * x - 3 * x; }, { cls: 'curve' }),
         h.seg(-1.7, 5.1, 1.6, -4.8, { cls: 'curve--soft' }),
         h.seg(1.55, -2.05, 2.35, 5.15, { cls: 'curve--soft' }),
-        h.dot(0, 0, { label: 'O', dx: -0.35, dy: -0.4, labelCls: 'lbl--sm' }),
+        h.dot(0, 0, { solid: true, r: 0.08 }),
         h.dot(2, 2, { label: 'P(2,2)', dx: 0.9, dy: 0.35, labelCls: 'lbl--sm' }),
         h.text(-3.05, 4.5, "y=-3x", 'lbl--sm', 'start'),
         h.text(0.2, 5.0, "y=9x-16", 'lbl--sm', 'start')

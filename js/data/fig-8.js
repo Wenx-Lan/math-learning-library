@@ -123,11 +123,11 @@
         h.vline(-Math.PI / 6, { cls: 'hl' }),
         h.dot(7 * Math.PI / 12, 2, { label: '7π/12', dy: 0.4 }),
         h.dot(Math.PI / 12, 0, { label: 'π/12', dy: -0.35 }),
-        h.dot(-Math.PI / 6, 0, { label: '-π/6', dy: -0.35 }),
+        h.dot(-Math.PI / 6, 0, { label: '-π/6', dx: -0.2, dy: -0.55 }),
         h.dot(Math.PI / 2, 0, { label: 'π/2', dy: 0.4 }),
         h.seg(-Math.PI / 6, 0, -Math.PI / 6, 2),
         h.text(-0.5, 1.1, 'A=2', 'lbl--sm'),
-        h.text(2.6, 2.3, 'y=2sin(2x+π/3)', 'lbl--sm')
+        h.text(0.2, 2.85, 'y=2sin(2x+π/3)', 'lbl--sm', 'start')
       );
     }
   });

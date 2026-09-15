@@ -33,7 +33,7 @@
         h.text(-1.75, 3.35, 'y=x^{2}', 'lbl--sm', 'start'),
         h.text(-2.9, -2.7, 'y=x^{3}', 'lbl--sm', 'start'),
         h.text(2.35, 4.75, 'y=x', 'lbl--sm', 'start'),
-        h.text(1.1, 1.35, 'y=x^{1/2}', 'lbl--sm', 'start'),
+        h.text(1.65, 1.55, 'y=x^{1/2}', 'lbl--sm', 'start'),
         h.text(2.05, 0.75, 'y=x^{-1}', 'lbl--sm', 'start')
       ];
     }
@@ -58,7 +58,7 @@
         h.fn(function (x) { return x * x * x; }, { from: 0, to: 2.05, cls: 'curve--soft' }),
         h.fn(function (x) { return Math.sqrt(x); }, { from: 0, to: 2.4 }),
         h.dot(1, 1, { label: '(1,1)', dx: 0.3, dy: -0.5 }),
-        h.dot(0, 0, { label: 'O', dx: -0.28, dy: -0.45 }),
+        h.dot(0, 0, { solid: true, r: 0.07 }),
         h.text(1.62, 3.15, 'y=x^{3}', 'lbl--sm', 'start'),
         h.text(1.62, 2.35, 'y=x^{2}', 'lbl--sm', 'start'),
         h.text(1.7, 1.18, 'y=x', 'lbl--sm', 'start'),
@@ -86,7 +86,7 @@
       kids.push(h.fn(function (x) { return Math.sqrt(x); }, { from: 0, to: 3 }));
       kids.push(h.fn(function (x) { return 1 / x; }, { from: 0.3, to: 3, cls: 'curve--soft' }));
       kids.push(h.fn(function (x) { return 1 / x; }, { from: -3, to: -0.3, cls: 'curve--soft' }));
-      kids.push(h.dot(0, 0, { label: 'O', dx: -0.26, dy: -0.4 }));
+      kids.push(h.dot(0, 0, { solid: true, r: 0.07 }));
       kids.push(h.dot(1, 1, { label: '(1,1)', dx: 0.34, dy: 0.32 }));
       kids.push(h.text(-2.1, 1.45, 'x&lt;0 无图像', 'lbl--sm'));
       kids.push(h.text(2.15, 2.75, 'y=x^{1/2}', 'lbl--sm', 'start'));

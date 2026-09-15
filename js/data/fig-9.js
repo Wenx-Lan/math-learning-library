@@ -76,8 +76,7 @@
         h.dot(4, 0, { label: 'A', dx: 0.05, dy: 0.42 }),
         h.text(0.92, 0.2, 'θ', 'lbl--sm'),
         h.text(2.75, 0.4, 'b', 'lbl--sm'),
-        h.text(0.85, -0.35, '投影 |b|cosθ', 'lbl--sm'),
-        h.text(-0.28, -0.28, 'O', 'lbl--sm')
+        h.text(0.85, -0.35, '投影 |b|cosθ', 'lbl--sm')
       );
     }
   });

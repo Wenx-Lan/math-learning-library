@@ -83,7 +83,7 @@
     var g = opt.grid == null ? 1 : opt.grid;
     var pad = opt.pad == null ? 0.5 : opt.pad;
     var x0 = xr[0], x1 = xr[1], y0 = yr[0], y1 = yr[1];
-    var vb = [x0 - pad, y0 - pad, (x1 - x0) + 2 * pad, (y1 - y0) + 2 * pad];
+    var vb = [x0 - pad, -y1 - pad, (x1 - x0) + 2 * pad, (y1 - y0) + 2 * pad];
 
     function F(x, y) { return [x, -y]; }
     function P(x, y) { return num(x) + ' ' + num(-y); }
@@ -294,6 +294,45 @@
   function get(id) { return registry[id] || null; }
   function ids() { return Object.keys(registry); }
 
+  /** 测量已绘制内容的包围盒，把 viewBox 自适应到恰好包住全部图形与文字，避免裁切 */
+  function fitViewBox(svg) {
+    try {
+      var holder = document.createElement('div');
+      holder.style.cssText = 'position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;';
+      document.body.appendChild(holder);
+      holder.appendChild(svg);
+      var g = document.createElementNS(NS, 'g');
+      var kids = Array.prototype.slice.call(svg.childNodes);
+      for (var i = 0; i < kids.length; i++) {
+        var c = kids[i];
+        if (c.nodeType === 1 && c.tagName && c.tagName.toLowerCase() === 'defs') { continue; }
+        g.appendChild(c);
+      }
+      svg.appendChild(g);
+      var box = g.getBBox();
+      var m = 0.18;
+      if (box && isFinite(box.width) && isFinite(box.height) && box.width > 0 && box.height > 0) {
+        svg.setAttribute('viewBox', [num(box.x - m), num(box.y - m), num(box.width + 2 * m), num(box.height + 2 * m)].join(' '));
+      }
+      holder.removeChild(svg);
+      document.body.removeChild(holder);
+    } catch (e) { /* 保底：保留原 viewBox */ }
+  }
+
+  /** 按 viewBox 宽度等比设置字号，使不同尺寸的图文字渲染大小一致、不重叠 */
+  function applyFontScale(nodes, vbW) {
+    if (!vbW || vbW <= 0) { return; }
+    var fsLbl = vbW * 0.039;
+    var fsSm = vbW * 0.034;
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el && el.nodeType === 1 && el.tagName && el.tagName.toLowerCase() === 'text') {
+        var cls = el.getAttribute('class') || '';
+        el.style.fontSize = (cls.indexOf('lbl--sm') >= 0 ? fsSm : fsLbl) + 'px';
+      }
+    }
+  }
+
   /** 生成 <figure class="fig">…</figure>，找不到图时返回 null */
   function build(id, opt) {
     opt = opt || {};
@@ -392,12 +431,17 @@
       }
       return out;
     })(nodes);
+    // 依据初始 viewBox 宽度等比缩放字号，避免小图文字过大重叠
+    var vbWidth = (vb instanceof Array) ? vb[2] : (String(vb).split(/\s+/).map(Number)[2] || 0);
+    applyFontScale(nodes, vbWidth);
     var svg = n('svg', {
       viewBox: (vb instanceof Array) ? vb.join(' ') : String(vb),
       xmlns: NS,
       role: 'img',
       'aria-label': def.title || id
     }, def.defs ? [ARROW_DEFS()].concat(nodes) : nodes);
+
+    fitViewBox(svg);
 
     var fig = document.createElement('figure');
     fig.className = 'fig';

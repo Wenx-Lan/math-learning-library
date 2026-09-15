@@ -18,7 +18,7 @@
       return [
         h.axes({ origin: true, ticks: true, xlabel: 'x', ylabel: 'y' }),
         h.circle(0, 0, 2, { cls: 'curve' }),
-        h.dot(0, 0, { label: 'C', dx: -0.35, dy: -0.32 }),
+        h.dot(0, 0, { label: 'C', dx: -0.4, dy: 0.35 }),
         h.seg(-3, 1, 3, -1, { cls: 'ax' }),
         h.text(2.6, -1.5, 'l', 'lbl--sm'),
         h.dot(0, 0, { r: 0.06, solid: true }),
@@ -41,7 +41,7 @@
         h.axes({ origin: true, ticks: true, xlabel: 'x', ylabel: 'y' }),
         h.seg(-0.8, -1.6, 3, 2.8, { cls: 'ax' }),
         h.angleArc(0, 0, 0.85, 0, Math.atan(2), { cls: 'arc' }),
-        h.text(1.15, 0.3, 'α', 'lbl--sm'),
+        h.text(0.62, 0.55, 'α', 'lbl--sm'),
         h.dot(1, 0.5, { label: 'A(1,0.5)', dx: 0.1, dy: -0.35, labelCls: 'lbl--sm' }),
         h.dot(2.5, 2.5, { label: 'B(2.5,2.5)', dx: 1.0, dy: 0.35, labelCls: 'lbl--sm' }),
         h.seg(1, 0.5, 2.5, 0.5, { cls: 'hl' }),
@@ -80,7 +80,7 @@
       return [
         h.axes({ origin: true, ticks: true, xlabel: 'x', ylabel: 'y' }),
         h.circle(0, 0, 2.5, { cls: 'curve' }),
-        h.dot(0, 0, { label: 'C', dx: -0.35, dy: -0.3 }),
+        h.dot(0, 0, { label: 'C', dx: -0.4, dy: 0.35 }),
         h.seg(-2, 1.5, 2, 1.5, { cls: 'ax' }),
         h.dot(-2, 1.5, { label: 'A', dx: -0.3, dy: -0.35, labelCls: 'lbl--sm' }),
         h.dot(2, 1.5, { label: 'B', dx: 0.3, dy: -0.35, labelCls: 'lbl--sm' }),
