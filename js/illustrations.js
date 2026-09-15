@@ -207,13 +207,12 @@
         return kids;
       },
 
-      /** 文本（数学坐标，自动翻正） */
+      /** 文本（数学坐标，y 已翻转为 SVG 坐标，文字保持正向、不镜像） */
       text: function (x, y, str, cls, anchor) {
         var t = n('text', {
           x: num(x), y: num(-y),
           class: cls || 'lbl',
-          'text-anchor': anchor || 'middle',
-          transform: 'scale(1,-1)'
+          'text-anchor': anchor || 'middle'
         }, str);
         return t;
       },
