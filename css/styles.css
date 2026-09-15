@@ -280,18 +280,18 @@ figure.fig figcaption {
 .fig svg text { font-family: var(--font); font-size: 0.6px; fill: var(--ink-2); }
 .fig svg .ax { stroke: #b9b9b4; stroke-width: 0.05; }
 .fig svg .grid { stroke: #ececea; stroke-width: 0.05; }
-.fig svg .curve { fill: none; stroke: #3a3a38; stroke-width: 0.09; }
+.fig svg .curve { fill: none; stroke: #2a78d6; stroke-width: 0.09; }
 .fig svg .curve--soft { stroke: #9a9a96; stroke-width: 0.065; stroke-dasharray: 0.2 0.2; }
-.fig svg .fill-soft { fill: #e8e8e4; stroke: none; }
-.fig svg .pt { fill: #ffffff; stroke: #3a3a38; stroke-width: 0.07; }
-.fig svg .pt--solid { fill: #3a3a38; }
+.fig svg .fill-soft { fill: #d6e6f8; stroke: none; }
+.fig svg .pt { fill: #ffffff; stroke: #2a78d6; stroke-width: 0.07; }
+.fig svg .pt--solid { fill: #2a78d6; }
 .fig svg .hl { stroke: #6b6b66; stroke-width: 0.06; stroke-dasharray: 0.15 0.15; }
 .fig svg .lbl { fill: var(--ink); font-size: 0.625px; }
 .fig svg .lbl--sm { font-size: 0.55px; fill: var(--ink-3); }
 .fig svg .shape { fill: #f0f0ec; stroke: #4a4a48; stroke-width: 0.07; }
 .fig svg .shape--dark { fill: #dedad4; stroke: #4a4a48; stroke-width: 0.07; }
 .fig svg .arc { fill: none; stroke: #6b6b66; stroke-width: 0.065; }
-.fig svg .vec { stroke: #3a3a38; stroke-width: 0.08; }
+.fig svg .vec { stroke: #2a78d6; stroke-width: 0.08; }
 
 /* ---------- 题型列表（主界面） ---------- */
 .type-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
