@@ -326,7 +326,7 @@
         class: (route.id === id ? 'is-active' : '')
       }, [
         h('span', { class: 'sidebar__num' }, String(id)),
-        h('span', { class: 'sidebar__name' }, titleText(name))
+        h('span', { class: 'sidebar__name', html: titleText(name).html, text: titleText(name).text })
       ]);
       ul.appendChild(h('li', null, a));
     });
@@ -891,7 +891,7 @@
         var wrap = h('div', { class: 'ex' + (isDone(pkey) ? ' is-done' : '') }, [
           h('div', { class: 'ex__head' }, [
             h('span', { class: 'ex__no' }, '例 ' + (i + 1) + '-' + (ei + 1)),
-            h('span', { class: 'small muted' }, titleText(ex.title || ''))
+            h('span', { class: 'small muted', html: titleText(ex.title || '').html, text: titleText(ex.title || '').text })
           ]),
           body
         ]);
