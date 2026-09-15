@@ -1,0 +1,46 @@
+/* ===========================================================
+   math.css —— 数学排版层
+   公式使用浏览器原生 MathML 排版（Chromium 109+ / Firefox / Safari 均支持）。
+   本文件只负责：字体、行高、块级公式间距、小屏适配与兜底提示。
+   =========================================================== */
+
+math {
+  font-family: "Cambria Math", "Latin Modern Math", "STIX Two Math", "Times New Roman", "Cambria", "Songti SC", "SimSun", serif;
+  font-size: 1.05em;
+  line-height: 1.2;
+  display: inline-block;
+  vertical-align: -0.18em;
+}
+
+math[display="block"] {
+  display: block;
+  margin: 12px auto;
+  text-align: center;
+  vertical-align: baseline;
+  font-size: 1.1em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+/* 分数、根式、上下限的可读性 */
+math mfrac { padding: 0 .12em; }
+math msqrt, math mroot { padding: 0 .08em; }
+math munder > mi, math mover > mi, math munderover > mi { font-style: normal; }
+math mtable { margin: 2px 0; }
+math mtext { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; font-size: .95em; }
+math mi { font-style: italic; }
+math mi[mathvariant="normal"] { font-style: normal; }
+
+/* 公式在行内不换行、过长时可横向滚动 */
+.content p math, .content li math:not([display="block"]) { max-width: 100%; }
+
+/* 不支持 MathML 的旧内核兜底：仍是可读的文本 */
+@supports not (math-style: normal) {
+  math { font-family: var(--math-font); white-space: nowrap; }
+}
+
+/* 打印 */
+@media print {
+  math[display="block"] { overflow: visible; }
+}

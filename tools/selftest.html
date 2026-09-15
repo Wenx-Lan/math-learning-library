@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据自检 · 高中数学学习资源库</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px 18px 60px;
+    background: #f4f4f2; color: #2f2f2d;
+    font: 14px/1.7 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: .5px; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  .muted { color: #7d7d78; }
+  .small { font-size: 12.5px; }
+  .mono { font-family: Consolas, "Courier New", monospace; font-size: 12.5px; }
+  .card {
+    background: #fff; border: 1px solid #dededa; border-radius: 6px;
+    padding: 14px 16px; margin: 12px 0;
+  }
+  .bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    margin: 14px 0 4px;
+  }
+  .chip {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    border: 1px solid #dededa; background: #fbfbfa; font-size: 13px;
+  }
+  .chip--pass { border-color: #b7d8bd; background: #eef7f0; color: #24613a; }
+  .chip--warn { border-color: #e2d3a8; background: #fbf6e8; color: #6d5514; }
+  .chip--fail { border-color: #e0b3b0; background: #fbeeee; color: #8a2b25; }
+  .badge { font-weight: 700; }
+  .badge--pass { color: #24613a; }
+  .badge--warn { color: #8a6b12; }
+  .badge--fail { color: #a3332c; }
+  button, .btn {
+    font: inherit; font-size: 13px; padding: 5px 14px; cursor: pointer;
+    border: 1px solid #cfcfc9; border-radius: 4px; background: #fff; color: #2f2f2d;
+    text-decoration: none; display: inline-block;
+  }
+  button:hover, .btn:hover { background: #f0f0ec; }
+  .sect { margin-top: 22px; }
+  .sect__head {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    border-bottom: 1px solid #e3e3df; padding-bottom: 6px; margin-bottom: 10px;
+  }
+  .sect__head h2 { margin: 0; }
+  details.item {
+    background: #fff; border: 1px solid #e3e3df; border-left-width: 4px;
+    border-radius: 4px; padding: 8px 12px; margin-bottom: 7px;
+  }
+  details.item > summary { cursor: pointer; outline: none; }
+  details.item--pass { border-left-color: #7fb98d; }
+  details.item--warn { border-left-color: #dcc06a; }
+  details.item--fail { border-left-color: #c9736c; }
+  details.item pre {
+    white-space: pre-wrap; word-break: break-word;
+    background: #fafaf8; border: 1px solid #ececE8; border-radius: 4px;
+    padding: 8px 10px; margin: 8px 0 0; font-family: Consolas, monospace; font-size: 12.5px;
+  }
+  #detail { max-height: 640px; overflow: auto; padding-right: 4px; }
+  .filelist { columns: 2; column-gap: 24px; }
+  .filelist div { break-inside: avoid; }
+  .hidden-host { position: absolute; left: -9999px; top: 0; width: 1px; height: 1px; overflow: hidden; }
+  .muted-box { background: #fbfbfa; border: 1px dashed #dededa; border-radius: 4px; padding: 10px 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>数据自检 · 高中数学学习资源库</h1>
+  <p class="muted small" style="margin:0">
+    本页与主程序以相同方式加载 <span class="mono">js/data/*.js</span>，逐项校验 18 章数据是否合规。
+    <b>不加载 app.js</b>，因此不会触发主界面渲染。建议用本地静态服务器打开：
+    <span class="mono">python -m http.server 8000</span> → <span class="mono">http://localhost:8000/tools/selftest.html</span>
+  </p>
+
+  <div class="bar">
+    <button id="btn-reload" type="button">重新检测（重新加载）</button>
+    <a class="btn" href="../index.html">打开首页</a>
+    <a class="btn" href="../index.html#/knowledge/1">基础知识第 1 章</a>
+    <span class="chip" id="chip-state">检测中…</span>
+  </div>
+
+  <div id="summary" class="card">
+    <b>正在加载数据文件…</b>
+    <div class="small muted" id="load-progress" style="margin-top:6px">0 / 0</div>
+  </div>
+
+  <div id="results"></div>
+
+  <div class="sect">
+    <div class="sect__head">
+      <h2>文件加载明细</h2>
+      <span class="chip">由本页动态加载</span>
+    </div>
+    <div class="card" id="file-table"><span class="muted small">等待加载…</span></div>
+  </div>
+
+  <div class="sect">
+    <div class="sect__head">
+      <h2>环境信息</h2>
+    </div>
+    <div class="card small" id="env"></div>
+  </div>
+
+  <div class="sect">
+    <div class="sect__head"><h2>检查项对照表</h2></div>
+    <div class="card small muted-box">
+      <div><b>A</b> 数据文件是否全部加载成功（onerror 记录）</div>
+      <div><b>B</b> 18 章 registerKnowledge：id 正确、name 非空、sections ≥ 4、proofs ≥ 2（每条 title + ≥2 steps）</div>
+      <div><b>C</b> 18 章 registerTypes：types ≥ 3，每个题型有 name / questions / examples</div>
+      <div><b>D</b> 每个题型 questions.length ∈ {3,4}；kind 至少 2 种；kind 只能是 choice/blank/short</div>
+      <div><b>E</b> 每题有 stem / answer / answerText（或 answer 数组）/ solution（去标签后 ≥ 15 字符，不得只写“略”）</div>
+      <div><b>F</b> choice 有 4 个非空 options 且 answer ∈ {A,B,C,D}；blank 有非空 blanks 且每个 blank 有 answer</div>
+      <div><b>G</b> 题目 id 形如 N-M-K、例题 id 形如 N-M-ex-K，且整章唯一</div>
+      <div><b>H</b> 每个题型 examples.length ∈ {1,2}，每条例题有 problem 与 solution</div>
+      <div><b>I</b> 全部 DSHFig.use('x') / DSHFig.row([{id:'x'}]) 引用的图 id 都存在于 DSHFig.registry</div>
+      <div><b>J</b> 公式配对：所有字符串中 \( 与 \) 数量相等、\[ 与 \] 数量相等</div>
+      <div><b>K</b> 章节顺序与 manifest 的 DSHData.order 为 1..18 连续</div>
+      <div><b>L</b> 数学渲染冒烟测试：每章第一章第一题的 stem + solution 经 DSHMath.render 后产生 &lt;math&gt; 且无异常</div>
+    </div>
+  </div>
+
+</div>
+
+<div id="hidden-host" class="hidden-host" aria-hidden="true"></div>
+
+<script>
+/* ==========================================================================
+   第 0 步：在加载任何数据文件之前，先给 console 打补丁，捕获异常与警告。
+   必须在下面的 <script src="..."> 之前执行，故本段脚本放在前面。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  /* DSHData / DSHFig / DSHMath 的兜底：保证数据文件能安全调用 */
+  var D = global.DSHData || (global.DSHData = {});
+  if (!D.knowledge) { D.knowledge = {}; }
+  if (!D.types) { D.types = {}; }
+  if (!D.order) { D.order = []; }
+  if (!D.files) { D.files = {}; }
+  if (!D.registered) { D.registered = { knowledge: {}, types: {} }; }
+  if (typeof D.setManifest !== 'function') {
+    D.setManifest = function (m) { this.files = m || {}; };
+  }
+  if (typeof D.registerKnowledge !== 'function') {
+    D.registerKnowledge = function (d) {
+      if (!d || d.id == null) { return false; }
+      if (this.registered.knowledge[d.id]) { return false; }
+      this.registered.knowledge[d.id] = true;
+      this.knowledge[d.id] = d;
+      if (this.order.indexOf(Number(d.id)) < 0) { this.order.push(Number(d.id)); }
+      return true;
+    };
+  }
+  if (typeof D.registerTypes !== 'function') {
+    D.registerTypes = function (d) {
+      if (!d || d.id == null) { return false; }
+      if (this.registered.types[d.id]) { return false; }
+      this.registered.types[d.id] = true;
+      this.types[d.id] = d;
+      return true;
+    };
+  }
+
+  /* 控制台记录器 */
+  var log = [];
+  var rawErr = console.error, rawWarn = console.warn;
+  console.error = function () {
+    log.push({ level: 'error', text: Array.prototype.slice.call(arguments).join(' ') });
+    if (rawErr) { rawErr.apply(console, arguments); }
+  };
+  console.warn = function () {
+    log.push({ level: 'warn', text: Array.prototype.slice.call(arguments).join(' ') });
+    if (rawWarn) { rawWarn.apply(console, arguments); }
+  };
+  global.DSHSelfTest = {
+    log: log,
+    errors: function () { return log.filter(function (x) { return x.level === 'error'; }); },
+    warns: function () { return log.filter(function (x) { return x.level === 'warn'; }); },
+    mark: function () { return log.length; },
+    since: function (n) { return log.slice(n); }
+  };
+})(window);
+</script>
+
+<!-- 与主程序相同的方式加载核心脚本（刻意不加载 app.js） -->
+<script src="../js/data/manifest.js"></script>
+<script src="../js/math.js"></script>
+<script src="../js/illustrations.js"></script>
+<script src="../js/illustrations-data.js"></script>
+
+<script>
+/* ==========================================================================
+   自检主体：动态加载 18 章 fig-*/k-*/t-* 文件，然后执行 A–L 全部校验。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var CH = [];
+  for (var i = 1; i <= 18; i++) { CH.push(i); }
+
+  var rawProgress = document.getElementById('load-progress');
+  var summaryBox = document.getElementById('summary');
+  var resultsBox = document.getElementById('results');
+  var fileTable = document.getElementById('file-table');
+  var chipState = document.getElementById('chip-state');
+  var btnReload = document.getElementById('btn-reload');
+
+  if (btnReload) {
+    btnReload.onclick = function () { location.reload(); };
+  }
+
+  /* ------------------------------------------------------------------
+     小工具
+     ------------------------------------------------------------------ */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function arr(x) { return Array.isArray(x) ? x : []; }
+  function nonEmpty(v) {
+    return v != null && String(v).replace(/\s|&nbsp;/g, '') !== '';
+  }
+  function stripTags(s) {
+    return String(s == null ? '' : s)
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+      .replace(/\\[()\[\]]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  function trunc(s, n) {
+    var t = String(s == null ? '' : s).replace(/\s+/g, ' ');
+    return t.length > n ? t.slice(0, n) + '…' : t;
+  }
+  /** 章节标题：优先用已注册数据的 name，其次 manifest */
+  function chapName(id) {
+    var k = (global.DSHData.knowledge || {})[id];
+    var t = (global.DSHData.types || {})[id];
+    var meta = (global.DSHData.index || {})[String(id)] || {};
+    return (k && k.name) || (t && t.name) || meta.name || '';
+  }
+  function chapLabel(id) { return '第 ' + id + ' 章' + (chapName(id) ? '「' + chapName(id) + '」' : ''); }
+
+  /* 结果收集 */
+  var results = [];
+  function addResult(level, cat, title, detail) {
+    results.push({ level: level, cat: cat, title: title, detail: detail || '' });
+  }
+  function pass(cat, title, detail) { addResult('pass', cat, title, detail); }
+  function warn(cat, title, detail) { addResult('warn', cat, title, detail); }
+  function fail(cat, title, detail) { addResult('fail', cat, title, detail); }
+
+  /**
+   * 对一组条目跑同一段检查：
+   *   - 全部通过 → 合并成一条「通过」结果
+   *   - 否则      → 逐条产出「失败/警告」结果（便于定位）
+   */
+  function each(cat, items, fn, passTitle) {
+    var bad = [];
+    for (var i = 0; i < items.length; i++) {
+      var r = fn(items[i]);
+      if (r) { bad.push({ item: items[i], res: r }); }
+    }
+    if (!bad.length) {
+      pass(cat, (passTitle || cat) + '：' + items.length + ' 项全部通过');
+      return;
+    }
+    for (var j = 0; j < bad.length; j++) {
+      addResult(bad[j].res.level, cat, bad[j].res.title, bad[j].res.detail);
+    }
+    if (items.length - bad.length > 0) {
+      pass(cat, (passTitle || cat) + '：其余 ' + (items.length - bad.length) + ' / ' + items.length + ' 项通过');
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     第 1 步：拼装并动态加载数据文件
+     ------------------------------------------------------------------ */
+  function normalize(p) {
+    return '../' + String(p).replace(/^\.?\//, '');
+  }
+
+  function buildFileList() {
+    var files = global.DSHData.files || {};
+    var index = global.DSHData.index || {};
+    var list = [];
+    CH.forEach(function (n) {
+      var meta = index[String(n)] || {};
+      var slug = meta.slug || (files[String(n)] && files[String(n)].slug) || meta.name || '';
+      var figSrc = '../js/data/fig-' + n + '.js';
+      if (meta.figFile) { figSrc = normalize(meta.figFile); }
+      list.push({ kind: 'fig', id: n, label: 'fig-' + n + '.js', src: figSrc });
+      list.push({ kind: 'knowledge', id: n, label: 'k-' + n + '-' + slug + '.js', src: '../js/data/k-' + n + '-' + slug + '.js' });
+      list.push({ kind: 'types', id: n, label: 't-' + n + '-' + slug + '.js', src: '../js/data/t-' + n + '-' + slug + '.js' });
+    });
+    return list;
+  }
+
+  function loadScript(src) {
+    return new Promise(function (resolve) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = false;
+      s.onload = function () { resolve({ ok: true, err: '' }); };
+      s.onerror = function () { resolve({ ok: false, err: 'onerror（文件缺失 / 404 / 语法错误 / MIME 不符）' }); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function loadAll(list) {
+    var done = 0;
+    var jobs = list.map(function (f) {
+      return loadScript(f.src).then(function (r) {
+        f.ok = r.ok;
+        f.err = r.err;
+        done++;
+        if (rawProgress) { rawProgress.textContent = done + ' / ' + list.length; }
+      });
+    });
+    return Promise.all(jobs);
+  }
+
+  /* ------------------------------------------------------------------
+     第 2 步：各类校验实现
+     ------------------------------------------------------------------ */
+
+  /* --- A. 文件加载 --- */
+  function checkLoad(list) {
+    var failed = list.filter(function (f) { return !f.ok; });
+    if (!failed.length) {
+      pass('A 文件加载', 'A. 数据文件加载：' + list.length + ' 个文件全部加载成功');
+    } else {
+      var lines = failed.map(function (f) { return f.src + '　—　' + f.err; });
+      fail('A 文件加载', 'A. 数据文件加载：' + failed.length + ' / ' + list.length + ' 个文件加载失败',
+        lines.join('\n'));
+    }
+    /* 加载成功但没注册数据 → 也算文件内容问题，在 B/C 中会体现，这里给出提示 */
+    var figEmpty = list.filter(function (f) { return f.kind === 'fig' && f.ok; });
+    pass('A 文件加载', 'A. 简图文件已尝试加载：' + figEmpty.length + ' 个（fig-N.js）');
+  }
+
+  /* --- B / C / D–H. 分章数据校验 --- */
+  function kindAllowed(k) { return k === 'choice' || k === 'blank' || k === 'short'; }
+
+  function checkKnowledge(n) {
+    var k = global.DSHData.knowledge[n];
+    if (!k) {
+      return { level: 'fail', title: chapLabel(n) + '：缺少 registerKnowledge 数据', detail: '未注册 DSHData.knowledge[' + n + ']' };
+    }
+    var problems = [];
+    if (Number(k.id) !== n) { problems.push('id = ' + JSON.stringify(k.id) + '，应为 ' + n); }
+    if (!nonEmpty(k.name)) { problems.push('name 为空'); }
+    var secs = arr(k.sections);
+    if (secs.length < 4) { problems.push('sections 只有 ' + secs.length + ' 节，要求 ≥ 4'); }
+    secs.forEach(function (s, i) {
+      if (!s || typeof s !== 'object') { problems.push('sections[' + i + '] 不是对象'); return; }
+      if (!nonEmpty(s.title)) { problems.push('sections[' + i + '].title 为空'); }
+      if (!nonEmpty(s.html)) { problems.push('sections[' + i + '].html 为空'); }
+    });
+    var proofs = arr(k.proofs);
+    if (proofs.length < 2) { problems.push('proofs 只有 ' + proofs.length + ' 条，要求 ≥ 2'); }
+    proofs.forEach(function (p, i) {
+      if (!p || typeof p !== 'object') { problems.push('proofs[' + i + '] 不是对象'); return; }
+      if (!nonEmpty(p.title)) { problems.push('proofs[' + i + '].title 为空'); }
+      var st = arr(p.steps);
+      if (st.length < 2) { problems.push('proofs[' + i + ']「' + trunc(p.title, 14) + '」steps 只有 ' + st.length + ' 步，要求 ≥ 2'); }
+      st.forEach(function (x, j) {
+        if (!nonEmpty(x)) { problems.push('proofs[' + i + '].steps[' + j + '] 为空'); }
+      });
+    });
+    if (problems.length) {
+      return { level: 'fail', title: chapLabel(n) + '：基础知识数据不合规（' + problems.length + ' 处）', detail: problems.join('\n') };
+    }
+    return null;
+  }
+
+  function checkTypesBasic(n) {
+    var t = global.DSHData.types[n];
+    if (!t) {
+      return { level: 'fail', title: chapLabel(n) + '：缺少 registerTypes 数据', detail: '未注册 DSHData.types[' + n + ']' };
+    }
+    var problems = [];
+    if (Number(t.id) !== n) { problems.push('id = ' + JSON.stringify(t.id) + '，应为 ' + n); }
+    if (!nonEmpty(t.name)) { problems.push('name 为空'); }
+    var list = arr(t.types);
+    if (list.length < 3) { problems.push('types 只有 ' + list.length + ' 个题型，要求 ≥ 3'); }
+    list.forEach(function (ty, i) {
+      var tag = '题型[' + (i + 1) + ']' + (ty && ty.id ? '(' + ty.id + ')' : '') + (ty && ty.name ? '「' + ty.name + '」' : '');
+      if (!ty || typeof ty !== 'object') { problems.push(tag + ' 不是对象'); return; }
+      if (!nonEmpty(ty.name)) { problems.push(tag + ' 缺少 name'); }
+      if (!Array.isArray(ty.questions)) { problems.push(tag + ' 缺少 questions 数组'); }
+      if (!Array.isArray(ty.examples)) { problems.push(tag + ' 缺少 examples 数组'); }
+    });
+    if (problems.length) {
+      return { level: 'fail', title: chapLabel(n) + '：题型数据不合规（' + problems.length + ' 处）', detail: problems.join('\n') };
+    }
+    return null;
+  }
+
+  /** D–H：逐题 / 逐例题校验，返回 { problems: [], stats: {} } */
+  function checkChapterQuestions(n) {
+    var t = global.DSHData.types[n];
+    var problems = [];
+    var stats = { types: 0, questions: 0, examples: 0, kinds: {} };
+    if (!t) { return { problems: ['未注册题型数据'], stats: stats }; }
+
+    var seenIds = {};
+    arr(t.types).forEach(function (ty, ti) {
+      stats.types++;
+      var tname = '题型' + (ti + 1) + (ty && ty.name ? '「' + trunc(ty.name, 16) + '」' : '');
+      var qs = arr(ty && ty.questions);
+      var exs = arr(ty && ty.examples);
+      stats.questions += qs.length;
+      stats.examples += exs.length;
+
+      /* D. 题量 3~4 */
+      if (qs.length < 3 || qs.length > 4) {
+        problems.push(tname + '：questions.length = ' + qs.length + '，要求 3 或 4');
+      }
+      /* D. kind 种类 ≥ 2，且取值合法 */
+      var kinds = {};
+      qs.forEach(function (q) {
+        var kd = q && q.kind ? String(q.kind) : '(缺失)';
+        kinds[kd] = true;
+        stats.kinds[kd] = true;
+      });
+      var kindKeys = Object.keys(kinds);
+      if (qs.length && kindKeys.length < 2) {
+        problems.push(tname + '：kind 只出现 ' + kindKeys.length + ' 种（' + kindKeys.join('/') + '），要求 ≥ 2 种');
+      }
+      kindKeys.forEach(function (kd) {
+        if (!kindAllowed(kd)) { problems.push(tname + '：出现非法 kind「' + kd + '」，只能是 choice/blank/short'); }
+      });
+
+      /* 逐题 */
+      qs.forEach(function (q, qi) {
+        var who = tname + ' 第 ' + (qi + 1) + ' 题' + (q && q.id ? '(' + q.id + ')' : '');
+        if (!q || typeof q !== 'object') { problems.push(who + '：不是对象'); return; }
+
+        /* G. id 格式与唯一性 */
+        var idRe = new RegExp('^' + n + '-\\d+(-ex)?-\\d+$');
+        if (!q.id) { problems.push(who + '：缺少 id'); }
+        else if (!idRe.test(String(q.id))) { problems.push(who + '：id 格式不合规（题目应为 N-M-K，例题应为 N-M-ex-K）'); }
+        else if (seenIds[q.id]) { problems.push(who + '：id 与 ' + seenIds[q.id] + ' 重复'); }
+        else { seenIds[q.id] = who; }
+
+        /* E. stem / answer / answerText / solution */
+        if (!nonEmpty(q.stem)) { problems.push(who + '：stem 为空'); }
+        if (!nonEmpty(q.answer) && !(Array.isArray(q.answer) && q.answer.length)) {
+          problems.push(who + '：缺少 answer');
+        }
+        var hasAnswerText = nonEmpty(q.answerText) || (Array.isArray(q.answer) && q.answer.length > 0);
+        if (!hasAnswerText) { problems.push(who + '：缺少 answerText（且 answer 不是数组）'); }
+        var solText = stripTags(q.solution);
+        if (!nonEmpty(q.solution)) {
+          problems.push(who + '：缺少 solution');
+        } else if (solText.length < 15) {
+          problems.push(who + '：solution 去掉标签后仅 ' + solText.length + ' 个字符（要求 ≥ 15，不得只写“略”）');
+        }
+
+        /* F. 分 kind 检查 */
+        if (q.kind === 'choice') {
+          var opts = arr(q.options);
+          if (opts.length !== 4) { problems.push(who + '：选择题 options 有 ' + opts.length + ' 个，要求 4 个'); }
+          opts.forEach(function (o, oi) {
+            if (!nonEmpty(o)) { problems.push(who + '：选项 ' + String.fromCharCode(65 + oi) + ' 为空'); }
+          });
+          var ans = String(q.answer == null ? '' : q.answer).trim().toUpperCase();
+          if (!/^[ABCD]$/.test(ans)) { problems.push(who + '：选择题 answer = ' + JSON.stringify(q.answer) + '，应为 A/B/C/D 之一'); }
+        } else if (q.kind === 'blank') {
+          var blanks = arr(q.blanks);
+          if (!blanks.length) { problems.push(who + '：填空题 blanks 为空'); }
+          blanks.forEach(function (b, bi) {
+            if (b == null) { problems.push(who + '：blanks[' + bi + '] 为 null'); return; }
+            if (typeof b === 'object') {
+              if (!nonEmpty(b.answer) && !(Array.isArray(b.answer) && b.answer.length)) {
+                problems.push(who + '：blanks[' + bi + '] 缺少 answer');
+              }
+            } else if (!nonEmpty(b)) {
+              problems.push(who + '：blanks[' + bi + '] 为空');
+            }
+          });
+        }
+      });
+
+      /* H. 例题数量与内容 */
+      if (exs.length < 1 || exs.length > 2) {
+        problems.push(tname + '：examples.length = ' + exs.length + '，要求 1 或 2');
+      }
+      exs.forEach(function (ex, ei) {
+        var who = tname + ' 例' + (ei + 1) + (ex && ex.id ? '(' + ex.id + ')' : '');
+        if (!ex || typeof ex !== 'object') { problems.push(who + '：不是对象'); return; }
+        var exIdRe = new RegExp('^' + n + '-\\d+-ex-\\d+$');
+        if (!ex.id) { problems.push(who + '：缺少 id'); }
+        else if (!exIdRe.test(String(ex.id))) { problems.push(who + '：例题 id 格式不合规（应为 N-M-ex-K）'); }
+        else if (seenIds[ex.id]) { problems.push(who + '：id 与 ' + seenIds[ex.id] + ' 重复'); }
+        else { seenIds[ex.id] = who; }
+        if (!nonEmpty(ex.problem)) { problems.push(who + '：缺少 problem'); }
+        if (!nonEmpty(ex.solution)) { problems.push(who + '：缺少 solution'); }
+      });
+    });
+
+    return { problems: problems, stats: stats };
+  }
+
+  /* --- I. 简图引用 --- */
+  function walkStrings(node, path, out) {
+    if (typeof node === 'string') { out.push({ path: path, text: node }); return out; }
+    if (node == null || typeof node !== 'object') { return out; }
+    if (Array.isArray(node)) {
+      for (var i = 0; i < node.length; i++) { walkStrings(node[i], path + '[' + i + ']', out); }
+      return out;
+    }
+    for (var kk in node) {
+      if (Object.prototype.hasOwnProperty.call(node, kk)) { walkStrings(node[kk], path + '.' + kk, out); }
+    }
+    return out;
+  }
+
+  var RE_USE = /DSHFig\.use\('([^']+)'\)/g;
+  var RE_ROW = /DSHFig\.row\(\[([^\]]+)\]/g;
+  var RE_ROW_ID = /\bid\s*:\s*'([^']+)'/g;
+
+  function collectFigRefs(text, refs) {
+    var m;
+    RE_USE.lastIndex = 0;
+    while ((m = RE_USE.exec(text)) !== null) { refs.push(m[1]); }
+    RE_ROW.lastIndex = 0;
+    while ((m = RE_ROW.exec(text)) !== null) {
+      var inner = m[1], mm;
+      RE_ROW_ID.lastIndex = 0;
+      while ((mm = RE_ROW_ID.exec(inner)) !== null) { refs.push(mm[1]); }
+    }
+  }
+
+  function checkFigures() {
+    var fig = global.DSHFig;
+    if (!fig || !fig.registry) {
+      fail('I 简图引用', 'I. DSHFig 未加载或 registry 不存在，无法校验简图引用');
+      return;
+    }
+    var missing = [];
+    var used = {};
+    CH.forEach(function (n) {
+      var refs = [];
+      var k = global.DSHData.knowledge[n];
+      if (k) { walkStrings(k, 'knowledge[' + n + ']', []).forEach(function (s) { collectFigRefs(s.text, refs); }); }
+      var t = global.DSHData.types[n];
+      if (t) { walkStrings(t, 'types[' + n + ']', []).forEach(function (s) { collectFigRefs(s.text, refs); }); }
+      refs.forEach(function (id) {
+        used[id] = true;
+        if (!fig.has(id)) { missing.push('第 ' + n + ' 章（' + chapName(n) + '）→ 图 id「' + id + '」在 DSHFig.registry 中不存在'); }
+      });
+    });
+    if (missing.length) {
+      fail('I 简图引用', 'I. 简图引用：' + missing.length + ' 处引用不存在（共引用 ' + Object.keys(used).length + ' 个 id）', missing.join('\n'));
+    } else {
+      pass('I 简图引用', 'I. 简图引用：引用 ' + Object.keys(used).length + ' 个图 id，全部存在于 DSHFig.registry');
+    }
+
+    /* 额外提示：manifest 声明的每章图 id（docs 已分配）是否都已注册 */
+    var declared = {
+      1: ['c1-set-represent', 'c1-venn-ops', 'c1-subset-count', 'c1-sufficient'],
+      2: ['c2-parabola-delta', 'c2-three-cases', 'c2-solution-read', 'c2-rational-sign'],
+      3: ['c3-semicircle-proof', 'c3-sum-product', 'c3-one-substitution', 'c3-mistake-equal'],
+      4: ['c4-monotonic', 'c4-parity', 'c4-symmetry', 'c4-ivt-zero'],
+      5: ['c5-power-family', 'c5-alpha-compare', 'c5-domain-range'],
+      6: ['c6-exp-graph', 'c6-exp-rules', 'c6-growth-model'],
+      7: ['c7-log-graph', 'c7-inverse-symmetry', 'c7-log-compare'],
+      8: ['c8-unit-circle-signs', 'c8-sin-cos-graph', 'c8-tan-graph', 'c8-y-asin', 'c8-induction'],
+      9: ['c9-vector-add', 'c9-vector-coord', 'c9-dot-projection', 'c9-collinear'],
+      10: ['c10-cosine-proof', 'c10-circumcircle', 'c10-measure-height', 'c10-area'],
+      11: ['c11-space-coord', 'c11-normal-vector', 'c11-line-plane-angle', 'c11-dihedral'],
+      12: ['c12-prism-pyramid', 'c12-cube-section', 'c12-parallel-theorem', 'c12-sphere-volume', 'c12-three-views'],
+      13: ['c13-sample-tree', 'c13-conditional', 'c13-normal-curve', 'c13-binomial'],
+      14: ['c14-count-tree', 'c14-pascal', 'c14-stars-bars'],
+      15: ['c15-histogram', 'c15-regression', 'c15-chi-square'],
+      16: ['c16-line-circle', 'c16-slope', 'c16-distance', 'c16-chord'],
+      17: ['c17-ellipse', 'c17-hyperbola', 'c17-parabola', 'c17-focal-chord'],
+      18: ['c18-tangent-slope', 'c18-monotonic', 'c18-extrema', 'c18-tangent-lines']
+    };
+    each('I 简图引用', CH, function (n) {
+      var miss = (declared[n] || []).filter(function (id) { return !fig.has(id); });
+      if (miss.length) {
+        return {
+          level: 'warn',
+          title: 'I. ' + chapLabel(n) + '：规范分配的 ' + miss.length + ' 个简图 id 未注册',
+          detail: miss.join('\n')
+        };
+      }
+      return null;
+    }, 'I. 各章规范简图 id 均已注册');
+  }
+
+  /* --- J. 公式配对 --- */
+  function countAll(s, needle) {
+    var c = 0, i = 0;
+    while ((i = s.indexOf(needle, i)) >= 0) { c++; i += needle.length; }
+    return c;
+  }
+  function checkMathDelims() {
+    var bad = [];
+    var scanned = 0;
+    CH.forEach(function (n) {
+      var roots = [];
+      if (global.DSHData.knowledge[n]) { roots.push(['knowledge', global.DSHData.knowledge[n]]); }
+      if (global.DSHData.types[n]) { roots.push(['types', global.DSHData.types[n]]); }
+      roots.forEach(function (pair) {
+        var strs = walkStrings(pair[1], pair[0] + '[' + n + ']', []);
+        strs.forEach(function (s) {
+          scanned++;
+          var openInline = countAll(s.text, '\\('), closeInline = countAll(s.text, '\\)');
+          var openDisp = countAll(s.text, '\\['), closeDisp = countAll(s.text, '\\]');
+          if (openInline !== closeInline) {
+            bad.push(chapLabel(n) + '　' + s.path + '\n  \\( × ' + openInline + ' ／ \\) × ' + closeInline + '\n  片段：' + trunc(s.text, 110));
+          }
+          if (openDisp !== closeDisp) {
+            bad.push(chapLabel(n) + '　' + s.path + '\n  \\[ × ' + openDisp + ' ／ \\] × ' + closeDisp + '\n  片段：' + trunc(s.text, 110));
+          }
+        });
+      });
+    });
+    if (bad.length) {
+      fail('J 公式配对', 'J. 公式配对：' + bad.length + ' 处 \\( \\) / \\[ \\] 数量不等（共扫描 ' + scanned + ' 个字符串）', bad.join('\n\n'));
+    } else {
+      pass('J 公式配对', 'J. 公式配对：' + scanned + ' 个字符串中 \\( \\) 与 \\[ \\] 全部配对');
+    }
+  }
+
+  /* --- K. 章节顺序 --- */
+  function checkOrder() {
+    var order = arr(global.DSHData.order);
+    var expect = CH.slice();
+    var same = order.length === expect.length && order.every(function (v, i) { return Number(v) === expect[i]; });
+    if (same) {
+      pass('K 章节顺序', 'K. DSHData.order = [1..18]，连续且与 manifest 一致');
+    } else if (order.length === 0) {
+      fail('K 章节顺序', 'K. DSHData.order 为空（manifest.js 未正确设置）', '期望 [1,2,…,18]');
+    } else if (order.length !== 18) {
+      fail('K 章节顺序', 'K. DSHData.order 长度为 ' + order.length + '，应为 18',
+        '实际：[' + order.join(',') + ']\n期望：[1,2,…,18]');
+    } else {
+      var mismatch = [];
+      expect.forEach(function (v, i) { if (Number(order[i]) !== v) { mismatch.push('位置 ' + (i + 1) + '：' + order[i] + '（应为 ' + v + '）'); } });
+      fail('K 章节顺序', 'K. DSHData.order 不是 1..18 连续', mismatch.join('\n'));
+    }
+    /* 附带：manifest index 是否覆盖 18 章 */
+    var idx = global.DSHData.index || {};
+    var missIdx = CH.filter(function (n) { return !idx[String(n)]; });
+    if (missIdx.length) {
+      warn('K 章节顺序', 'K. manifest 的 DSHData.index 缺少章节：' + missIdx.join(', '));
+    } else {
+      pass('K 章节顺序', 'K. DSHData.index 覆盖 1–18 全部章节');
+    }
+  }
+
+  /* --- L. 数学渲染冒烟测试 --- */
+  function checkRender() {
+    var host = document.getElementById('hidden-host');
+    if (!host) { fail('L 渲染冒烟', 'L. 找不到隐藏测试容器'); return; }
+    if (!global.DSHMath || typeof global.DSHMath.render !== 'function') {
+      fail('L 渲染冒烟', 'L. DSHMath 未加载或缺少 render 方法');
+      return;
+    }
+    var cases = [];
+    CH.forEach(function (n) {
+      var t = global.DSHData.types[n];
+      if (!t) { return; }
+      var ty = arr(t.types)[0];
+      if (!ty) { return; }
+      var q = arr(ty.questions)[0];
+      if (!q) { return; }
+      cases.push({ id: n, q: q, idText: (q.id || ((ty.id || n + '-1') + '-1')) });
+    });
+    if (!cases.length) {
+      warn('L 渲染冒烟', 'L. 渲染冒烟测试：没有可用的题型/题目样本（题型数据缺失），跳过');
+      return;
+    }
+
+    var problems = [];
+    var totalMath = 0, totalExpected = 0;
+    cases.forEach(function (c) {
+      var before = global.DSHSelfTest.mark();
+      var div = document.createElement('div');
+      var src = String(c.q.stem || '') + String(c.q.solution || '') + String(c.q.answerText || '');
+      var expect = 0;
+      var re = /\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, mm;
+      while ((mm = re.exec(src)) !== null) { expect++; }
+      div.innerHTML = src;
+      host.appendChild(div);
+      var err = '';
+      try {
+        global.DSHMath.render(div);
+      } catch (e) {
+        err = 'DSHMath.render 抛出异常：' + (e && e.message ? e.message : e);
+      }
+      var mathNodes = div.querySelectorAll('math').length;
+      totalMath += mathNodes;
+      totalExpected += expect;
+      if (err) { problems.push('第 ' + c.id + ' 章 ' + c.idText + '：' + err); }
+      if (expect > 0 && mathNodes === 0) {
+        problems.push('第 ' + c.id + ' 章 ' + c.idText + '：源文本含 ' + expect + ' 个公式，但渲染后没有产生 <math> 元素');
+      }
+      if (expect === 0) {
+        problems.push('第 ' + c.id + ' 章 ' + c.idText + '：首题 stem/solution 中未发现 \\( \\) 或 \\[ \\] 公式（内容可能缺少公式）');
+      }
+      var logged = global.DSHSelfTest.since(before);
+      var errs = logged.filter(function (x) { return x.level === 'error'; });
+      if (errs.length) {
+        problems.push('第 ' + c.id + ' 章 ' + c.idText + '：渲染期间控制台报错 ' + errs.length + ' 条 → ' + trunc(errs[0].text, 120));
+      }
+      host.removeChild(div);
+    });
+
+    var errsInLoop = problems.filter(function (p) { return p.indexOf('未发现') < 0; });
+    if (!errsInLoop.length) {
+      pass('L 渲染冒烟', 'L. 渲染冒烟：' + cases.length + ' 章首题 stem+solution 渲染成功，共生成 ' + totalMath + ' 个 <math> 元素（源含 ' + totalExpected + ' 个公式）');
+    } else {
+      fail('L 渲染冒烟', 'L. 渲染冒烟：' + errsInLoop.length + ' 章存在问题（共测试 ' + cases.length + ' 章，生成 ' + totalMath + ' 个 <math>）', errsInLoop.join('\n'));
+    }
+    var noFormula = problems.filter(function (p) { return p.indexOf('未发现') >= 0; });
+    if (noFormula.length) {
+      warn('L 渲染冒烟', 'L. 渲染冒烟：' + noFormula.length + ' 章的首题不含任何公式写法（提示性警告）', noFormula.join('\n'));
+    }
+  }
+
+  /* --- 额外：控制台整体异常 --- */
+  function checkConsole() {
+    var errs = global.DSHSelfTest.errors();
+    var warns = global.DSHSelfTest.warns();
+    if (errs.length) {
+      fail('M 控制台', 'M. 控制台出现 ' + errs.length + ' 条 error', errs.map(function (x) { return trunc(x.text, 160); }).join('\n'));
+    } else {
+      pass('M 控制台', 'M. 控制台无 error');
+    }
+    if (warns.length) {
+      warn('M 控制台', 'M. 控制台出现 ' + warns.length + ' 条 warning', warns.map(function (x) { return trunc(x.text, 160); }).join('\n'));
+    } else {
+      pass('M 控制台', 'M. 控制台无 warning');
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     第 3 步：汇总与渲染
+     ------------------------------------------------------------------ */
+  function renderSummary(counts, secs) {
+    var state = counts.fail ? 'fail' : (counts.warn ? 'warn' : 'pass');
+    var stateText = counts.fail ? '✗ 失败' : (counts.warn ? '⚠ 警告' : '✓ 通过');
+    chipState.className = 'chip chip--' + state;
+    chipState.textContent = stateText + '　（通过 ' + counts.pass + ' / 警告 ' + counts.warn + ' / 失败 ' + counts.fail + '）';
+    summaryBox.innerHTML =
+      '<div class="bar" style="margin:0">' +
+        '<span class="chip chip--pass">通过 ' + counts.pass + '</span>' +
+        '<span class="chip chip--warn">警告 ' + counts.warn + '</span>' +
+        '<span class="chip chip--fail">失败 ' + counts.fail + '</span>' +
+        '<span class="chip">共 ' + counts.total + ' 条检查</span>' +
+        '<span class="chip">数据文件 ' + counts.filesOk + ' / ' + counts.files + ' 加载成功</span>' +
+        '<span class="chip">知识 ' + counts.knowledge + ' / 18 章</span>' +
+        '<span class="chip">题型 ' + counts.types + ' / 18 章</span>' +
+        '<span class="chip">题型数 ' + counts.typeCount + '　题目 ' + counts.questionCount + '　例题 ' + counts.exampleCount + '</span>' +
+        '<span class="chip">耗时 ' + secs + ' ms</span>' +
+      '</div>' +
+      '<div class="small muted" style="margin-top:8px">' +
+        'DSHData.order = [' + arr(global.DSHData.order).join(',') + ']　·　DSHFig.registry 共 ' +
+        ((global.DSHFig && global.DSHFig.ids) ? global.DSHFig.ids().length : 0) + ' 幅简图' +
+      '</div>';
+  }
+
+  function renderResults() {
+    var cats = [];
+    var map = {};
+    results.forEach(function (r) {
+      if (!map[r.cat]) { map[r.cat] = []; cats.push(r.cat); }
+      map[r.cat].push(r);
+    });
+    var html = '';
+    cats.forEach(function (cat) {
+      var list = map[cat];
+      var nPass = list.filter(function (x) { return x.level === 'pass'; }).length;
+      var nWarn = list.filter(function (x) { return x.level === 'warn'; }).length;
+      var nFail = list.filter(function (x) { return x.level === 'fail'; }).length;
+      html += '<div class="sect"><div class="sect__head">' +
+        '<h2>' + esc(cat) + '</h2>' +
+        (nPass ? '<span class="chip chip--pass">通过 ' + nPass + '</span>' : '') +
+        (nWarn ? '<span class="chip chip--warn">警告 ' + nWarn + '</span>' : '') +
+        (nFail ? '<span class="chip chip--fail">失败 ' + nFail + '</span>' : '') +
+        '</div><div>';
+      list.forEach(function (r) {
+        var mark = r.level === 'pass' ? '✓' : (r.level === 'warn' ? '⚠' : '✗');
+        var label = r.level === 'pass' ? '通过' : (r.level === 'warn' ? '警告' : '失败');
+        html += '<details class="item item--' + r.level + '"' + (r.level === 'pass' ? '' : ' open') + '>' +
+          '<summary><span class="badge badge--' + r.level + '">' + mark + ' ' + label + '</span>　' + esc(r.title) + '</summary>' +
+          (r.detail ? '<pre>' + esc(r.detail) + '</pre>' : '') +
+          '</details>';
+      });
+      html += '</div></div>';
+    });
+    resultsBox.innerHTML = html || '<div class="card muted">没有任何检查结果。</div>';
+  }
+
+  function renderFileTable(list) {
+    var failed = list.filter(function (f) { return !f.ok; });
+    var html = '<div class="small muted" style="margin-bottom:8px">共 ' + list.length +
+      ' 个数据文件：成功 ' + (list.length - failed.length) + '，失败 ' + failed.length +
+      '（路径相对 tools/selftest.html）</div><div class="filelist small mono">';
+    var kindName = { fig: '简图', knowledge: '基础', types: '题型' };
+    list.forEach(function (f) {
+      html += '<div>' + (f.ok ? '<span class="badge badge--pass">✓</span>' : '<span class="badge badge--fail">✗</span>') +
+        ' [' + kindName[f.kind] + '] ' + esc(f.src) + '</div>';
+    });
+    html += '</div>';
+    fileTable.innerHTML = html;
+  }
+
+  function renderEnv(list) {
+    var idx = global.DSHData.index || {};
+    var rows = [];
+    CH.forEach(function (n) {
+      var meta = idx[String(n)] || {};
+      var f = list.filter(function (x) { return x.id === n && x.kind === 'knowledge'; })[0] || {};
+      var ft = list.filter(function (x) { return x.id === n && x.kind === 'types'; })[0] || {};
+      rows.push('<tr><td class="mono">' + n + '</td><td>' + esc(meta.name || (meta.slug || '')) + '</td>' +
+        '<td class="small muted">' + esc(meta.group || '') + '</td>' +
+        '<td class="mono small">' + (f.ok ? '✓' : '✗') + ' ' + esc(String(f.src || '').replace('../', '')) + '</td>' +
+        '<td class="mono small">' + (ft.ok ? '✓' : '✗') + ' </td></tr>');
+    });
+    document.getElementById('env').innerHTML =
+      '<div class="small muted" style="margin-bottom:8px">页面地址：<span class="mono">' + esc(location.href) + '</span>　·　' +
+      'UserAgent：<span class="mono">' + esc(navigator.userAgent) + '</span></div>' +
+      '<table style="width:100%;border-collapse:collapse" class="small">' +
+      '<thead><tr><th style="text-align:left">章</th><th style="text-align:left">名称</th><th style="text-align:left">分组</th>' +
+      '<th style="text-align:left">k 文件</th><th style="text-align:left">t 文件</th></tr></thead><tbody>' +
+      rows.join('') + '</tbody></table>';
+  }
+
+  /* ------------------------------------------------------------------
+     第 4 步：主流程
+     ------------------------------------------------------------------ */
+  function run() {
+    var t0 = (global.performance && performance.now) ? performance.now() : Date.now();
+    var list = buildFileList();
+
+    renderFileTable(list);
+
+    loadAll(list).then(function () {
+      /* A */
+      checkLoad(list);
+
+      /* B / C */
+      each('B 基础知识', CH, checkKnowledge, 'B. 18 章基础知识（id/name/sections/proofs）');
+      each('C 题型结构', CH, checkTypesBasic, 'C. 18 章题型结构（types ≥ 3，name/questions/examples）');
+
+      /* D–H */
+      var allProblems = [];
+      var typeCount = 0, questionCount = 0, exampleCount = 0;
+      CH.forEach(function (n) {
+        var r = checkChapterQuestions(n);
+        if (r.problems.length) {
+          allProblems.push('【' + chapLabel(n) + '】\n  - ' + r.problems.join('\n  - '));
+        }
+        typeCount += r.stats.types;
+        questionCount += r.stats.questions;
+        exampleCount += r.stats.examples;
+      });
+      if (allProblems.length) {
+        fail('D–H 题目数据', 'D–H. 题目/例题数据：' + allProblems.length + ' 章存在问题', allProblems.join('\n\n'));
+      } else {
+        pass('D–H 题目数据', 'D–H. 题目/例题数据：18 章全部合规（题量 3~4、kind ≥ 2 种、答案与解析齐备、id 规范唯一、例题 1~2 条）');
+      }
+
+      /* I / J / K */
+      checkFigures();
+      checkMathDelims();
+      checkOrder();
+
+      /* L */
+      checkRender();
+
+      /* M */
+      checkConsole();
+
+      /* 汇总 */
+      var counts = { pass: 0, warn: 0, fail: 0, total: results.length };
+      results.forEach(function (r) { counts[r.level]++; });
+      counts.files = list.length;
+      counts.filesOk = list.filter(function (f) { return f.ok; }).length;
+      counts.knowledge = CH.filter(function (n) { return !!global.DSHData.knowledge[n]; }).length;
+      counts.types = CH.filter(function (n) { return !!global.DSHData.types[n]; }).length;
+      counts.typeCount = typeCount;
+      counts.questionCount = questionCount;
+      counts.exampleCount = exampleCount;
+
+      var t1 = (global.performance && performance.now) ? performance.now() : Date.now();
+      renderSummary(counts, Math.round(t1 - t0));
+      renderResults();
+      renderFileTable(list);
+      renderEnv(list);
+
+      global.DSHSelfTest.result = { counts: counts, results: results, files: list };
+    }).catch(function (e) {
+      chipState.className = 'chip chip--fail';
+      chipState.textContent = '✗ 自检脚本异常';
+      summaryBox.innerHTML = '<b class="badge badge--fail">自检脚本异常：' + esc(e && e.message ? e.message : e) + '</b>';
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})(window);
+</script>
+
+</body>
+</html>

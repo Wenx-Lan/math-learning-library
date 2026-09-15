@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>高中数学学习资源库</title>
+<meta name="description" content="高中数学基础知识与题型训练资源库：概念梳理、辅助简图、证明推导、题型配套练习与解析。离线可用。">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/math.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <div class="brand">高中数学学习资源库<span id="brand-sub">基础知识 · 题型训练</span></div>
+    <nav class="main-nav">
+      <a id="nav-knowledge" href="#/knowledge">基础知识</a>
+      <a id="nav-types" href="#/types">题型</a>
+      <a href="#/">首页</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout" id="layout">
+  <aside class="sidebar" id="sidebar" hidden></aside>
+  <main class="content" id="main" aria-live="polite"></main>
+</div>
+
+<footer class="site-footer">
+  <span id="footer-note">高中数学学习资源库</span>
+  <div style="margin-top:4px">灰白简约 · 纯静态 · 无需联网 —— 建议用本地静态服务器打开（如：python -m http.server 8000）</div>
+</footer>
+
+<!-- 1) 数据注册中心 + 章节目录 -->
+<script src="js/data/manifest.js"></script>
+<!-- 2) 核心程序 -->
+<script src="js/math.js"></script>
+<script src="js/illustrations.js"></script>
+<script src="js/illustrations-data.js"></script>
+<script src="js/app.js"></script>
+<!-- 3) 章节内容文件（js/data/k-*.js 与 t-*.js）由 app.js 按需动态加载 -->
+
+</body>
+</html>
