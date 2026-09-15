@@ -264,7 +264,17 @@
       case 'frac':
       case 'dfrac':
       case 'tfrac': {
-        var a = this.parseArg(), b = this.parseArg();
+        var fa = this.peek();
+        var a, b;
+        if (fa && fa.t === 'num' && fa.v.length > 1) {
+          // \frac12、\frac35 等裸数字写法：分子取首位数字，剩余作分母
+          this.next();
+          a = mn(fa.v.charAt(0));
+          b = mn(fa.v.slice(1));
+        } else {
+          a = this.parseArg();
+          b = this.parseArg();
+        }
         return el('mfrac', { linethickness: name === 'tfrac' ? '0' : null }, [a, b]);
       }
       case 'sqrt': {
@@ -628,6 +638,20 @@
       }
       return null;
     }
+    /** 读取一个“参数”：要么是 {…} 花括号组，要么是单个字符/单个命令（如 \frac12、\frac p2）。 */
+    function readArg(src, from) {
+      var p = from;
+      while (p < src.length && /\s/.test(src.charAt(p))) { p++; }
+      if (src.charAt(p) === '{') {
+        var gg = readGroup(src, p);
+        return gg ? { body: gg.body, next: gg.next } : { body: '', next: p + 1 };
+      }
+      if (src.charAt(p) === String.fromCharCode(92)) {
+        var cm = CMD_RE.exec(src.slice(p + 1));
+        if (cm) { return { body: src.slice(p, p + 1 + cm[0].length), next: p + 1 + cm[0].length }; }
+      }
+      return { body: src.charAt(p), next: p + 1 };
+    }
     function readScript(src, from) {
       if (src.charAt(from) === '{') {
         var g = readGroup(src, from);
@@ -657,9 +681,10 @@
         arg = g ? g.body : null;
         argNext = g ? g.next : j;
         if (name === 'frac' || name === 'dfrac' || name === 'tfrac') {
-          g2 = readGroup(s, argNext);
-          out += '(' + (arg == null ? '' : mathToUnicode(arg)) + ')/(' + (g2 ? mathToUnicode(g2.body) : '') + ')';
-          i = g2 ? g2.next : argNext;
+          var rn = readArg(s, j);
+          var rd = readArg(s, rn.next);
+          out += '(' + mathToUnicode(rn.body) + ')/(' + mathToUnicode(rd.body) + ')';
+          i = rd.next;
           continue;
         }
         if (name === 'sqrt') {
