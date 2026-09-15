@@ -45,10 +45,10 @@
       out.push(n('text', { class: 'lbl--sm', x: '0.85', y: '4.0' }, 'A₃'));
       out.push(n('text', { class: 'lbl--sm', x: '3.4', y: '-0.02' }, 'B₁'));
       out.push(n('text', { class: 'lbl--sm', x: '3.4', y: '0.7' }, 'B₂'));
-      out.push(n('text', { class: 'lbl--sm', x: '4.75', y: '0.42' }, 'C₁'));
-      out.push(n('text', { class: 'lbl--sm', x: '4.75', y: '0.78' }, 'C₂'));
-      out.push(n('text', { class: 'lbl--sm', x: '6.62', y: '-0.02' }, '第1种'));
-      out.push(n('text', { class: 'lbl--sm', x: '6.62', y: '4.02' }, '第12种'));
+      out.push(n('text', { class: 'lbl--sm', x: '4.75', y: '0.3' }, 'C₁'));
+      out.push(n('text', { class: 'lbl--sm', x: '4.75', y: '0.9' }, 'C₂'));
+      out.push(n('text', { class: 'lbl--sm', x: '7.95', y: '0.05' }, '第1种'));
+      out.push(n('text', { class: 'lbl--sm', x: '7.95', y: '3.85' }, '第12种'));
       out.push(n('text', { class: 'lbl--sm', x: '3.1', y: '4.5' }, '上衣 → 长裤 → 运动鞋，每一步都完成才算一种搭配'));
       return out;
     }
@@ -109,11 +109,11 @@
       out.push(n('text', { class: 'lbl', x: '2.02', y: '1.05' }, '∗₂'));
       out.push(n('text', { class: 'lbl', x: '3.9', y: '1.05' }, '∗₆'));
       out.push(n('text', { class: 'lbl', x: '5.6', y: '1.05' }, '⋯'));
-      out.push(n('text', { class: 'lbl--sm', x: '2.62', y: '-0.95' }, '第 1 个盒子'));
-      out.push(n('text', { class: 'lbl--sm', x: '4.62', y: '-0.35' }, '第 2 个盒子'));
-      out.push(n('text', { class: 'lbl--sm', x: '6.05', y: '-0.35' }, '第 3 个盒子'));
-      out.push(n('text', { class: 'lbl--sm', x: '1.69', y: '-1.05' }, '隔板'));
-      out.push(n('text', { class: 'lbl--sm', x: '3.67', y: '-1.05' }, '隔板'));
+      out.push(n('text', { class: 'lbl--sm', x: '0.7', y: '-0.95' }, '第 1 个盒子'));
+      out.push(n('text', { class: 'lbl--sm', x: '2.35', y: '-0.95' }, '第 2 个盒子'));
+      out.push(n('text', { class: 'lbl--sm', x: '4.3', y: '-0.95' }, '第 3 个盒子'));
+      out.push(n('text', { class: 'lbl--sm', x: '1.69', y: '-0.55' }, '隔板'));
+      out.push(n('text', { class: 'lbl--sm', x: '3.67', y: '-0.55' }, '隔板'));
       return out;
     }
   });

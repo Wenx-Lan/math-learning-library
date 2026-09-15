@@ -13,19 +13,20 @@
   add('c15-histogram', {
     title: '频率分布直方图',
     caption: '纵轴是 \\(\\dfrac{\\text{频率}}{\\text{组距}}\\)，所以每个小矩形的面积等于该组的频率，所有矩形面积之和为 1；此图的平均数估计值为 \\(\\bar x\\approx76\\)。',
-    coord: { x: [50, 100], y: [0, 0.042], grid: 0, pad: 0.4 },
+    coord: { x: [-0.5, 5.5], y: [0, 5], grid: 0, pad: 0.6 },
     draw: function (h) {
-      var mids = [55, 65, 75, 85, 95];
       var fr = [0.05, 0.15, 0.40, 0.30, 0.10];
+      var bounds = [50, 60, 70, 80, 90, 100];
       var out = [], i;
       for (i = 0; i < 5; i++) {
-        var hh = fr[i] / 10;
-        out.push(h.poly([[mids[i] - 5, 0], [mids[i] + 5, 0], [mids[i] + 5, hh], [mids[i] - 5, hh]], { cls: 'shape', close: true }));
-        out.push(h.text(mids[i], hh + 0.0018, String(fr[i]), 'lbl--sm'));
+        var hh = fr[i] * 10; // 频率/组距 ×100（显示缩放）
+        out.push(h.poly([[i, 0], [i + 1, 0], [i + 1, hh], [i, hh]], { cls: 'shape', close: true }));
+        out.push(h.text(i + 0.5, hh + 0.22, String(fr[i]), 'lbl--sm'));
       }
-      /* 用一条水平虚线把"频率 0.035"的高度标出来，便于读图 */
-      out.push(h.hline(0.035, { from: 50, to: 100, cls: 'hl' }));
-      out.push(h.text(51.4, 0.0358, '频率/组距 = 0.035', 'lbl--sm', 'start'));
+      for (i = 0; i < 6; i++) {
+        out.push(h.text(i, -0.42, String(bounds[i]), 'lbl--sm'));
+      }
+      out.push(h.text(2.5, 4.7, '纵轴：频率/组距（显示缩放 ×100）', 'lbl--sm'));
       return out;
     }
   });

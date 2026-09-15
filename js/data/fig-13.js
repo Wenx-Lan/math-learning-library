@@ -15,45 +15,35 @@
   add('c13-sample-tree', {
     title: '样本空间的树状图表示',
     caption: '每一条从根到叶的路径对应一个样本点，共 \\(2\\times2\\times2=8\\) 个等可能样本点，其中「恰好两次正面」含 3 个，故概率为 \\(\\dfrac{3}{8}\\)。',
-    viewBox: '-0.6 -4.4 9.2 8.9',
+    viewBox: '-0.5 -4.2 11 8.4',
     draw: function (h) {
-      var lv = [[0, 1.4], [1.4, 3.3], [3.3, 4.7], [4.7, 5.4]];
-      var lines = [], lbls = [], i, j, k;
-      /* 根到第 1 层 */
-      for (i = 0; i < 2; i++) {
-        lines.push(n('line', { class: 'ax', x1: '1.0', y1: '0', x2: '3.4', y2: String(lv[0][i]) }));
+      var nodes = [], i;
+      var lv1 = [-1.75, 1.75];
+      var lv2 = [-2.625, -0.875, 0.875, 2.625];
+      var leaves = [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5];
+      var outcomes = ['正正正', '正正反', '正反正', '正反反', '反正正', '反正反', '反反正', '反反反'];
+      function L(x1, y1, x2, y2) { return n('line', { class: 'ax', x1: String(x1), y1: String(y1), x2: String(x2), y2: String(y2) }); }
+
+      nodes.push(L(0.2, 0, 2.5, lv1[0]), L(0.2, 0, 2.5, lv1[1]));
+      nodes.push(L(2.5, lv1[0], 5, lv2[0]), L(2.5, lv1[0], 5, lv2[1]));
+      nodes.push(L(2.5, lv1[1], 5, lv2[2]), L(2.5, lv1[1], 5, lv2[3]));
+      for (i = 0; i < 4; i++) {
+        nodes.push(L(5, lv2[i], 7.5, leaves[2 * i]), L(5, lv2[i], 7.5, leaves[2 * i + 1]));
       }
-      /* 第 1 层到第 2 层 */
-      for (i = 0; i < 2; i++) {
-        for (j = 0; j < 2; j++) {
-          lines.push(n('line', { class: 'ax', x1: '3.4', y1: String(lv[0][i]), x2: '5.8', y2: String(lv[1][j]) }));
-        }
-      }
-      /* 第 2 层到第 3 层（叶子） */
-      for (i = 0; i < 2; i++) {
-        for (j = 0; j < 2; j++) {
-          for (k = 0; k < 2; k++) {
-            lines.push(n('line', { class: 'ax', x1: '5.8', y1: String(lv[1][j]), x2: '8.0', y2: String(lv[2][k]) }));
-          }
-        }
-      }
-      /* 节点标签 */
-      lbls.push(n('text', { class: 'lbl', x: '0.9', y: '0.35' }, '开始'));
-      lbls.push(n('text', { class: 'lbl--sm', x: '2.25', y: '-0.32' }, '正'));
-      lbls.push(n('text', { class: 'lbl--sm', x: '2.25', y: '1.72' }, '反'));
-      lbls.push(n('text', { class: 'lbl--sm', x: '4.6', y: '1.12' }, '正'));
-      lbls.push(n('text', { class: 'lbl--sm', x: '4.6', y: '1.68' }, '反'));
-      lbls.push(n('text', { class: 'lbl--sm', x: '4.6', y: '3.02' }, '正'));
-      lbls.push(n('text', { class: 'lbl--sm', x: '4.6', y: '3.58' }, '反'));
-      /* 8 个样本点与概率标注 */
-      var yy = [3.3, 4.2, 4.7, 5.1, 5.7, 6.1, 6.6, 7.5];
-      var out = ['正正正', '正正反', '正反正', '正反反', '反正正', '反正反', '反反正', '反反反'];
+
+      nodes.push(h.text('0.2', '0.38', '开始', 'lbl'));
+      nodes.push(h.text('1.35', '-1.0', '正', 'lbl--sm'));
+      nodes.push(h.text('1.35', '1.05', '反', 'lbl--sm'));
+      nodes.push(h.text('3.75', '-1.85', '正', 'lbl--sm'));
+      nodes.push(h.text('3.75', '-0.35', '反', 'lbl--sm'));
+      nodes.push(h.text('3.75', '0.5', '正', 'lbl--sm'));
+      nodes.push(h.text('3.75', '1.9', '反', 'lbl--sm'));
+
       for (i = 0; i < 8; i++) {
-        lbls.push(n('circle', { class: 'pt--solid', cx: '8.0', cy: String(yy[i]), r: '0.09' }));
-        lbls.push(n('text', { class: 'lbl--sm', x: '8.25', y: String(yy[i] + 0.32), 'text-anchor': 'start' },
-          out[i] + '（1/8）'));
+        nodes.push(n('circle', { class: 'pt--solid', cx: '7.5', cy: String(leaves[i]), r: '0.08' }));
+        nodes.push(h.text('7.75', String(leaves[i] + 0.28), outcomes[i] + '（1/8）', 'lbl--sm', 'start'));
       }
-      return lines.concat(lbls);
+      return nodes;
     }
   });
 
@@ -133,8 +123,8 @@
       var i, p = [0.0625, 0.25, 0.375, 0.25, 0.0625], out = [];
       for (i = 0; i < 5; i++) {
         out.push(h.poly([[i - 0.35, 0], [i + 0.35, 0], [i + 0.35, p[i]], [i - 0.35, p[i]]], { cls: 'shape', close: true }));
-        out.push(h.text(i, p[i] + 0.045, String(p[i]), 'lbl--sm'));
-        out.push(h.text(i, -0.075, String(i), 'lbl'));
+        out.push(h.text(i, p[i] + 0.05, String(p[i]), 'lbl--sm'));
+        out.push(h.text(i, -0.16, String(i), 'lbl'));
       }
       return out;
     }
