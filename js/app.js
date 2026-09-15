@@ -349,7 +349,7 @@
       h('div', { class: 'toc-grid' }, [
         h('a', { href: '#/knowledge' }, [
           h('span', { class: 'sidebar__num' }, 'Ⅰ'),
-          h('span', null, '基础知识（18 章 · 概念 + 证明）')
+          h('span', null, '基础知识（19 章 · 概念 + 证明）')
         ]),
         h('a', { href: '#/types' }, [
           h('span', { class: 'sidebar__num' }, 'Ⅱ'),
@@ -1027,7 +1027,7 @@
     // 建立章节目录（若数据文件未提供 index，则使用默认 18 章）
     if (!DSHData.index || !Object.keys(DSHData.index).length) {
       DSHData.index = {};
-      for (var i = 1; i <= 18; i++) { DSHData.index[String(i)] = {}; }
+      for (var i = 1; i <= 19; i++) { DSHData.index[String(i)] = {}; }
     }
     if (!DSHData.order.length) {
       DSHData.order = Object.keys(DSHData.index).map(Number).sort(function (a, b) { return a - b; });
