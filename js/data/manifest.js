@@ -83,6 +83,6 @@ DSHData.index = {
 
   DSHData.order = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 
-  DSHData.stats = { types: 100, questions: 365, examples: 159 };
+  DSHData.stats = { types: 116, questions: 425, examples: 191 };
 
 })(typeof window !== 'undefined' ? window : globalThis);
