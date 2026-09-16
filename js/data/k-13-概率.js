@@ -145,9 +145,9 @@ DSHData.registerKnowledge({
         '<li>曲线与 \\(x\\) 轴之间的面积恒为 1，且 \\(P(X\\le\\mu)=P(X\\ge\\mu)=0.5\\)。</li>' +
         '</ul>' +
         '<p><b>\\(3\\sigma\\) 原则</b>：</p>' +
-        '\\[P(\\mu-\\sigma<X\\le\\mu+\\sigma)\\approx0.6827,\\]' +
-        '\\[P(\\mu-2\\sigma<X\\le\\mu+2\\sigma)\\approx0.9545,\\]' +
-        '\\[P(\\mu-3\\sigma<X\\le\\mu+3\\sigma)\\approx0.9973.\\]' +
+        '\\[P(\\mu-\\sigma&lt;X\\le\\mu+\\sigma)\\approx0.6827,\\]' +
+        '\\[P(\\mu-2\\sigma&lt;X\\le\\mu+2\\sigma)\\approx0.9545,\\]' +
+        '\\[P(\\mu-3\\sigma&lt;X\\le\\mu+3\\sigma)\\approx0.9973.\\]' +
         '<p>这说明正态变量几乎总落在 \\((\\mu-3\\sigma,\\mu+3\\sigma)\\) 内，超出这个范围的可能性只有约 \\(0.27\\%\\)，实际中通常视为小概率事件。</p>' 
 }
   ],

@@ -696,6 +696,7 @@
           if (b.before != null) { box.appendChild(h('span', { class: 'content', html: b.before })); }
           var inp = h('input', { class: 'blank', type: 'text', 'data-idx': bi, autocomplete: 'off', placeholder: b.placeholder || '填答案' });
           inputs.push({ el: inp, type: 'blank', answer: b.answer });
+          box.appendChild(inp);
           if (b.after != null) { box.appendChild(h('span', { class: 'content', html: b.after })); }
         } else {
           var bd = typeof b === 'object' ? b : { answer: b };
